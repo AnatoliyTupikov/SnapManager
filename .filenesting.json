@@ -1,0 +1,15 @@
+{
+  "help": "https://go.microsoft.com/fwlink/?linkid=866610",
+
+  "dependentFileProviders": {
+    "add": {
+      "fileSuffixToExtension": {
+        "add": {
+          "DataGridRow.cs": [ ".xaml" ],
+          "ViewModel.cs": [ ".xaml" ],
+          "TemplateSelector.cs": [ ".xaml" ]
+        }
+      }
+    }
+  }
+}

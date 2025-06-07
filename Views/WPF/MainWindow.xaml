@@ -1,0 +1,36 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SnapManager.Views.WPF"
+        xmlns:behaviors="clr-namespace:SnapManager.Views.WPF.WPFHelpers"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+        xmlns:muc="clr-namespace:MyUserControls;assembly=MyUserControls"
+        xmlns:SpinnerDouble="clr-namespace:MyUserControls.SpinnerDouble;assembly=MyUserControls"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        x:Name="StartWindow" x:Class="SnapManager.Views.WPF.MainWindow"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="750" Width="1400">
+    <!--подключаем пространство имен xmlns:i, чтобы добавить нужный тег-->
+    <i:Interaction.Behaviors>
+        <behaviors:WindowPositionBehavior CenterPosition="{Binding WindowCenterPosition, Mode=TwoWay}" />
+    </i:Interaction.Behaviors>
+
+    <DockPanel LastChildFill="False">
+        <Menu DockPanel.Dock="Top" 
+              Height="25" 
+              Background="#FF8A8989">
+            <MenuItem Header="File">
+                <MenuItem 
+                    Header="DB Settings"                     
+                    Command="{Binding ConfigurationDBShow}"/>
+            </MenuItem>
+
+        </Menu>
+        <Canvas Width="378">
+            
+        </Canvas>
+
+    </DockPanel>
+</Window>
