@@ -1,4 +1,4 @@
-﻿using SnapManager.Views.WPF.WPFHelpers;
+﻿using SnapManager.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -12,13 +12,8 @@ namespace SnapManager.Views.WPF
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public ErrorHandler? ErrorHandler { get; set; }
 
         public BaseViewModel() { }
-        public BaseViewModel(ErrorHandler ErrorHandler)
-        {
-            this.ErrorHandler = ErrorHandler;
-        }
 
 
 

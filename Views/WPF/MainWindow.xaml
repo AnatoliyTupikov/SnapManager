@@ -14,17 +14,29 @@
         Title="MainWindow" Height="750" Width="1400">
     <!--подключаем пространство имен xmlns:i, чтобы добавить нужный тег-->
     <i:Interaction.Behaviors>
-        <behaviors:WindowPositionBehavior CenterPosition="{Binding WindowCenterPosition, Mode=TwoWay}" />
+        <behaviors:WindowPositionBehavior CenterPosition="{Binding WindowCenterPosition, Mode=TwoWay}"/>
     </i:Interaction.Behaviors>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding WindowLoaded}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <DockPanel LastChildFill="False">
         <Menu DockPanel.Dock="Top" 
               Height="25" 
               Background="#FF8A8989">
-            <MenuItem Header="File">
+            <MenuItem  Header="File..." Height="25" Width="36" VerticalContentAlignment="Center" Padding="5,0,0,0" Margin="0,0,-1,0">
                 <MenuItem 
+                    
                     Header="DB Settings"                     
-                    Command="{Binding ConfigurationDBShow}"/>
+                    Command="{Binding ConfigurationDBShow}" />
+            </MenuItem>
+            <MenuItem Header="|" FontSize="16" IsEnabled="False" Width="10" Padding="2,-5,0,0" HorizontalContentAlignment="Center"/>
+
+            <MenuItem  Header="Credential Manager" Command="{Binding CredentialsWizardShow}" Margin="-1,0,0,0">
+                
+                
             </MenuItem>
 
         </Menu>

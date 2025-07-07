@@ -13,21 +13,26 @@ using Microsoft.Extensions.Configuration;
 using System.IO;
 using SnapManager.Views.WPF;
 using System.Collections.ObjectModel;
+using SnapManager.Services;
 using SnapManager.Views.WPF.WPFHelpers;
 
 namespace SnapManager
 {
-    
+
     internal static class Program
     {
         public const string   appsettingsPath = "appsettings.json";
+
        
             
         public static IHost AppHost { get; private set; }
         [STAThread]
         public static void Main()
         {
-            ErrorHandler.TryWindowed(()=> { Go(); }, "Error while starting app:");
+            
+            ErrorHandler.Try(
+                ()=> { Go(); },
+                (Exception ex)=> ErrorDialogService.ShowErrorMessage(ex, "Error while starting app:", severity: Severity.Error) );
         }
 
         public static void Go()
@@ -48,6 +53,7 @@ namespace SnapManager
                     services.AddSingleton<App>();
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<DbService>();
+                    services.AddSingleton<HierarchyService>();
 
                 })
                 .ConfigureAppConfiguration(config =>
@@ -64,5 +70,8 @@ namespace SnapManager
 
             // запускаем приложения
         }
+
+        
+
     }
 }

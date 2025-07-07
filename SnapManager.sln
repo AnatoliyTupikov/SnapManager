@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnapManager", "SnapManager.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyUserControls", "..\MyUserControls\MyUserControls.csproj", "{4C3D0A92-6139-44A1-A17E-E1A659039110}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnapManager.Migrations.NpgsqlServer", "..\SnapManager.Migrations.NpgsqlServer\SnapManager.Migrations.NpgsqlServer.csproj", "{56CA6077-38DD-4AE5-9865-5644242005EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +23,15 @@ Global
 		{4C3D0A92-6139-44A1-A17E-E1A659039110}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C3D0A92-6139-44A1-A17E-E1A659039110}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C3D0A92-6139-44A1-A17E-E1A659039110}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56CA6077-38DD-4AE5-9865-5644242005EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56CA6077-38DD-4AE5-9865-5644242005EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56CA6077-38DD-4AE5-9865-5644242005EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56CA6077-38DD-4AE5-9865-5644242005EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3239F9CE-38BE-46D2-9219-DA657C9EBDF8}
 	EndGlobalSection
 EndGlobal

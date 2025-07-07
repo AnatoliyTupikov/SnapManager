@@ -37,20 +37,7 @@ namespace SnapManager.Views.WPF
             set { OnPropertyChanged<dynamic>(ref _column1, value); }
         }
 
-
-        
-
-        //private ColumClass _column1;
-
-        //public ColumClass Test1
-        //{
-        //    get { return _column1; }
-        //    set { OnPropertyChanged(ref _column1, value); }
-        //}
-
-        private dynamic? _column2;
-
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+        private dynamic? _column2;      
 
         public dynamic? Column2
         {
@@ -63,20 +50,14 @@ namespace SnapManager.Views.WPF
             }
         }
 
-        //private ColumClass _column2;
-
-        //public ColumClass Test2
-        //{
-        //    get { return _column2; }
-        //    set { OnPropertyChanged(ref _column2, value); }
-        //}
-
         private bool _offValidation = false;
 
         private Dictionary<string, List<string>> _errors = new();
         public string Error => null;
 
         public bool HasErrors => _errors.Any();
+
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         public IEnumerable GetErrors(string? propertyName)
         {
@@ -95,7 +76,7 @@ namespace SnapManager.Views.WPF
                 if (_offValidation) 
                 {
                     this._offValidation = false;
-                    return null;
+                    return null!;
                 }
                     
 
@@ -108,7 +89,7 @@ namespace SnapManager.Views.WPF
                         return errorMessage; 
                     }
                 }
-                return null;
+                return null!;
             }
         }
 
@@ -141,15 +122,16 @@ namespace SnapManager.Views.WPF
         {
             Type type = DBConfigurationRowCollection[0].TypeOfCastedObj;
             object? objinstance = Activator.CreateInstance(type);
-            DBSettingsBase instance = (DBSettingsBase)objinstance;
+            DBSettingsBase instance = (DBSettingsBase)objinstance!;
 
             
             var properties = type.GetProperties();
             var propquery = properties.Where(p => p.GetCustomAttributes(typeof(DisplayAttribute), true).Length > 0)?
                                       .OrderBy(p => p.GetCustomAttribute<DisplayAttribute>(true)?.Order);
+
             foreach (var row in DBConfigurationRowCollection)
             {
-                var property = propquery.First(p => p.GetCustomAttribute< DisplayAttribute>().Name == row.Column1);
+                var property = propquery.First(p => p.GetCustomAttribute<DisplayAttribute>().Name == row.Column1);
                 property.SetValue(instance, row.Column2);
             }
             return instance;

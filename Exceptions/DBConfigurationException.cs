@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SnapManager.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,9 +18,10 @@ namespace SnapManager.Exceptions
         public int ErrorCode { get; private set; }
         public DBConfigurationException() { }
 
-        public DBConfigurationException(string message, int ErrorCode) : base(message) 
+        public DBConfigurationException(string message, int errorCode = 0, Severity severity = Severity.Error) : base(message) 
         {
-            this.ErrorCode = ErrorCode;
+            this.ErrorCode = errorCode;
+            base.Data["Severity"] = severity;
         }
     }
 }

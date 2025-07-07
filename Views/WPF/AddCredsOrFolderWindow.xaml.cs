@@ -1,10 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using SnapManager.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,17 +15,13 @@ using System.Windows.Shapes;
 namespace SnapManager.Views.WPF
 {
     /// <summary>
-    /// Interaction logic for DBSettings.xaml
+    /// Interaction logic for AddCredsOrFolderWindow.xaml
     /// </summary>
-    public partial class DBSettings : Window
+    public partial class AddCredsOrFolderWindow : Window
     {
-
-        public DBSettings()
+        public AddCredsOrFolderWindow()
         {
             InitializeComponent();
-            DataContext = ActivatorUtilities.CreateInstance<DBSettingsWindowViewModel>(Program.AppHost.Services);
-
         }
-
     }
 }

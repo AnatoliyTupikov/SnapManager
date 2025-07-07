@@ -17,12 +17,6 @@ namespace SnapManager.Views.WPF
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
 
-            //if (item is ColumClass val)
-            //{
-            //    if (val.Value is int) return IntProp;
-            //    if (val.Value is string) return StringProp; 
-            //}
-
             if (item is DBSettingsWindowDataGridRow row)
             {
                 if (row.Column2 is int) return IntProp;

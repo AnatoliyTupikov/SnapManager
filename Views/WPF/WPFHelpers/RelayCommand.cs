@@ -29,6 +29,7 @@ namespace SnapManager.Views.WPF.WPFHelpers
         {
             this.execute = execute;
             this.canExecute = canExecute;
+
         }
 
         bool ICommand.CanExecute(object? parameter)
@@ -39,6 +40,16 @@ namespace SnapManager.Views.WPF.WPFHelpers
         void ICommand.Execute(object? parameter)
         {
             execute(parameter);
+        }
+
+        public void Execute(object? parameter)
+        {
+            execute(parameter);
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 }

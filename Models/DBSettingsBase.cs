@@ -7,11 +7,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using SnapManager.Data;
+using System.Reflection;
 
 namespace SnapManager.Models
 {
     
-    public abstract class DBSettingsBase
+    public abstract  class DBSettingsBase
     {
         [Required]
         [Display(Name = "Hostname", Order = 1)]
@@ -21,13 +22,22 @@ namespace SnapManager.Models
         [Display(Name = "Database", Order = 3)]
         public virtual string Database { get; set; }
 
-        public abstract void FillUp(string? connectionstring);
-        public abstract void FillUp(DbConnectionStringBuilder connectionstring);
+        public virtual bool IsInitialized { get; protected set; } = false;
+        public virtual string DisplayProviderName 
+        {
+            get => this.GetType().GetCustomAttribute<DisplayAttribute>()?.Name ?? this.GetType().Name; 
+        }
+
+        public abstract void Initialize(string? connectionstring);
+        public abstract void Initialize(DbConnectionStringBuilder connectionstring);
 
         public abstract string GetConnectionString();
         public abstract DbConnectionStringBuilder GetConnectionStringBuilder();
 
         public abstract DbContextOptionsBuilder<ApplicationDbContext> GetDbContextOptionsBuilder();
+
+       
+        
 
     }
 }

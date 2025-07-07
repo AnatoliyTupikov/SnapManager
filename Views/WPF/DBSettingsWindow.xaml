@@ -10,32 +10,29 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         Title="DBSettings" Height="500" Width="600" ResizeMode="CanResizeWithGrip" 
         MinHeight="400" MinWidth="580"
-        xmlns:muc="clr-namespace:MyUserControls;assembly=MyUserControls" Loaded="Window_Loaded">
+        xmlns:muc="clr-namespace:MyUserControls;assembly=MyUserControls" >
 
     <Window.Resources>
-        <DataTemplate x:Key="IntDataTemplate">
 
+        <SolidColorBrush x:Key="ErrorRed" Color="Crimson" Opacity="0.1"/>
+        <SolidColorBrush x:Key="CommonBack" Color =  "LightGray" Opacity="0.2"/>
+        
+        <DataTemplate x:Key="IntDataTemplate">
             <muc:Spinner SpinnerValueInt="{Binding Path=Column2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          MinValue="1"
                          MaxValue="65535"
                          HorizontalAlignment="Left"
                          Width="75"
                          MinHeight="30"
-                         Height="Auto"  />
+                         Height="Auto"/>
 
-        </DataTemplate>
-
-        <SolidColorBrush x:Key="ErrorRed" Color="Crimson" Opacity="0.1"/>
-        <SolidColorBrush x:Key="CommonBack" Color =  "LightGray" Opacity="0.2"/>
+        </DataTemplate>       
 
         <DataTemplate x:Key="StringDataTemplate">
             <TextBox Text="{Binding Path=Column2, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                      HorizontalAlignment="Left"
-                     MinWidth="100"
-                     
-                     >
-                <TextBox.Style>
-                    
+                     MinWidth="100">
+                <TextBox.Style>                    
                     <Style TargetType="TextBox">
                         <Setter Property="Background" Value="{StaticResource CommonBack}"/>
                         <Setter Property="BorderThickness" Value="0.5"/>
@@ -43,8 +40,7 @@
                         <Setter Property="Validation.ErrorTemplate">
                             <Setter.Value>                                
                                 <ControlTemplate>
-                                    <DockPanel LastChildFill="True">
-                                        
+                                    <DockPanel LastChildFill="True">                                        
                                         <!-- Отображаем сам TextBox -->
                                         <AdornedElementPlaceholder DockPanel.Dock="Left"/>
                                         <Label Foreground="Red" 
@@ -56,10 +52,7 @@
                                                         RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Adorner}}"
                                             ToolTip="{Binding Path=AdornedElement.(Validation.Errors)[0].ErrorContent,
                                                         RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Adorner}}"
-                                            ToolTipService.IsEnabled="True" Padding="0,-1,0,0" Margin="10,0,0,0" 
-                                            />    
-                                        
-                                        
+                                            ToolTipService.IsEnabled="True" Padding="0,-1,0,0" Margin="10,0,0,0"/>                                        
                                     </DockPanel>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -80,7 +73,7 @@
             </TextBox>
 
 
-        </DataTemplate>
+        </DataTemplate>        
 
         <local:DBSettingsWindowTemplateSelector x:Key="PropSelector"
                                           IntProp="{StaticResource ResourceKey=IntDataTemplate}"
@@ -103,8 +96,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="45"/>
                     <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                
+                </Grid.RowDefinitions>           
 
                 <DataGrid 
                     EnableRowVirtualization="False"
@@ -153,20 +145,9 @@
 
 
                 </DataGrid>
-                <!--<xctk:PropertyGrid 
-                    ShowTitle="False"
-                    ShowSortOptions="False"
-                    ShowSearchBox="False"
-                    ShowSummary="False"
-                    Grid.Row="2"
-                    SelectedObject="{Binding Test, Mode=TwoWay}" >
-                    <xctk:PropertyGrid.PropertyContainerStyle>
-                        
-                    </xctk:PropertyGrid.PropertyContainerStyle>
-                </xctk:PropertyGrid>-->
+                
                 <ComboBox ItemsSource="{Binding ProvidersList}"
-                          DisplayMemberPath="Key"
-                          
+                          DisplayMemberPath="Key"                          
                           SelectedValue="{Binding SelectedDbProvider, Mode=TwoWay}"
                           
                     HorizontalAlignment="Left" Margin="42,0,0,0" VerticalAlignment="Center" Width="207"/>

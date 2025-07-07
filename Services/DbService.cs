@@ -4,6 +4,8 @@ using Microsoft.Extensions.Options;
 using Npgsql;
 using SnapManager.Exceptions;
 using SnapManager.Models;
+using SnapManager.Services;
+using SnapManager.Views.WPF.WPFHelpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,14 +25,21 @@ namespace SnapManager.Data
     {
         private Dictionary<string, DBSettingsBase> _dbSettingsList = new Dictionary<string, DBSettingsBase>
         {
-            [typeof(NpgDBSettings).GetCustomAttribute<DisplayAttribute>().Name] = new NpgDBSettings()
+            [typeof(NpgDBSettings).GetCustomAttribute<DisplayAttribute>()?.Name ?? typeof(NpgDBSettings).Name]  = new NpgDBSettings()
         };
-
+        /// <summary>
+        /// Свойство для получения списка допустимых провайдеров баз данных. А также их конфигураций, которые были получены из appsettings.json при инициализации сервиса.
+        /// Каждый раз создает новый экземпляр KeyValuePair, чтобы избежать проблем с изменением словаря.
+        /// </summary>
         public Dictionary<string, DBSettingsBase> DbSettingsList => new(_dbSettingsList);
 
 
         private KeyValuePair<string, DBSettingsBase> _selectedDbProvider;
 
+        /// <summary>
+        /// Свойство для получения выбранного провайдера базы данных.
+        /// Каждый раз создает новый экземпляр KeyValuePair, чтобы избежать проблем с изменением словаря.
+        /// </summary>
         public KeyValuePair<string, DBSettingsBase> SelectedDbProvider => new(_selectedDbProvider.Key, _selectedDbProvider.Value);
 
 
@@ -46,62 +55,69 @@ namespace SnapManager.Data
 
         }
 
+        /// <summary>
+        /// Инициализация конфигураций базы данных из appsettings.json.
+        /// </summary>
         private void InitializeDbConfigurationsFromAppSett()
         {
             var RootConf = (ConfigurationRoot)configuration;
             RootConf.Reload();
+            //Вызов RootConf.Reload(); обновляет конфигурацию, загруженную из источников, таких как файл appsettings.json.
+            //Это полезно, если конфигурация была изменена во время выполнения приложения, и эти изменения вступили в силу без необходимости перезапуска этого приложения.
             GetSavedProviderConfigurationsFromAppSett();
-            GetSelectedProviderFromAppSett();
+            ErrorHandler.Try(
+                () => GetSelectedProviderFromAppSett(),
+                (Exception ex) => ErrorDialogService.ShowErrorMessage((ex)));
+
+
 
         }
 
+        /// <summary>
+        /// Получаем сохранненные конфигурации для каждого провайдера DB из appsettings.json и заполняем их в словарь _dbSettingsList.
+        /// </summary>
         private void GetSavedProviderConfigurationsFromAppSett()
         {
             foreach (var s in _dbSettingsList)
             {
-                s.Value.FillUp(GetConnectionStringFromAppSett(s.Key));
+                string? cs = configuration.GetConnectionString(s.Key);
+                //Невалидная строка: передаст как есть
+                //Отсутствие нода (как конкретного по провайдеру, так и основного "ConnectionStrings") или в принципе файла: возвращает null
+                ErrorHandler.Try(
+                    () => s.Value?.Initialize(cs),
+                    (Exception ex) => ErrorDialogService.ShowErrorMessage(ex, $"Configuration for \"{s.Key}\" provider can't be upload from Application Settings: \n "));
+
+
             }
 
         }
 
+        /// <summary>
+        /// Сервис получает выбранного провайдера из appsettings.json и проверяет его на поддержку.
+        /// </summary>
         private void GetSelectedProviderFromAppSett()
         {
-            string selected = configuration["DBType"];
-            if (selected is null) _selectedDbProvider = _dbSettingsList.First(p => p.Key == typeof(NpgDBSettings).GetCustomAttribute<DisplayAttribute>().Name);
-            IsSupportedDbProvider(selected);
-            _selectedDbProvider = _dbSettingsList.First(p => p.Key == selected);
-
-
-        }
-
-        private bool IsSupportedDbProvider(string? dbProvider)
-        {
-            if (string.IsNullOrWhiteSpace(dbProvider)) throw new DBConfigurationException("There is no database type specified in appsettings.json.", 110);
-            if (!_dbSettingsList.ContainsKey(dbProvider)) throw new DBConfigurationException($"\"{dbProvider}\" is not supported database type.", 111);
-            else return true;
-        }
-
-        private string? GetConnectionStringFromAppSett(string dbProvider) => GetConnectionStringFromAppSett(out var catchedEx, dbProvider);
-
-        private string? GetConnectionStringFromAppSett(out DBConfigurationException? catchedEx, string dbProvider)
-        {
+            string? selected = configuration["DBType"];
+            //Невалидная строка: передаст как есть
+            //Отсутствие нода или впринципе файла: возвращает null
             try
             {
-                string? result = configuration.GetConnectionString(dbProvider ?? throw new DBConfigurationException($"Connection string \"{dbProvider}\" not specified in appsetting.", 120));
-                catchedEx = null;
-                return result;
+                _selectedDbProvider = _dbSettingsList.First(p => p.Key == selected);
             }
-            catch (DBConfigurationException ex) when (new[] { 120 }.Contains(ex.ErrorCode))
+            catch (InvalidOperationException ex)
             {
-                catchedEx = ex;
-                return null;
+                _selectedDbProvider = _dbSettingsList.First(p => p.Key == (typeof(NpgDBSettings).GetCustomAttribute<DisplayAttribute>()?.Name ?? typeof(NpgDBSettings).Name));
+                if (string.IsNullOrWhiteSpace(selected)) throw new DBConfigurationException($"There is no database type specified in appsettings.json. The {_selectedDbProvider.Key} provider was specified as selected", 100, Severity.Warning); //110 - there is no db type
+                if (!_dbSettingsList.ContainsKey(selected)) throw new DBConfigurationException($"\"{selected}\" is not supported database type. The {_selectedDbProvider.Key} provider was specified as selected ", 110, Severity.Warning); //111 - specified the db type is not supproted
+                throw ex;
             }
 
         }
+        
 
         private int SaveDbSettingsToAppConfig(DBSettingsBase dBSettingsobj) 
         {
-            string dbProvidername = dBSettingsobj.GetType().GetCustomAttribute<DisplayAttribute>().Name;
+            string dbProvidername = dBSettingsobj.DisplayProviderName;
 
             var semaphore = new SemaphoreSlim(1, 1);
             semaphore.Wait();
@@ -121,20 +137,51 @@ namespace SnapManager.Data
 
         }
 
-        public ApplicationDbContext GetDBContext() => new ApplicationDbContext(SelectedDbProvider.Value.GetDbContextOptionsBuilder().Options);
-        public ApplicationDbContext GetDBContext(DBSettingsBase dBSettingsobj) => new ApplicationDbContext(dBSettingsobj.GetDbContextOptionsBuilder().Options);
+        public ApplicationDbContext GetDBContext()
+        {
+            if (!_selectedDbProvider.Value.IsInitialized) 
+            {
+
+                throw new DBConfigurationException($"The database settings are not configured. Please, specify it.", 130, Severity.Warning);
+
+            };
+            return new ApplicationDbContext(SelectedDbProvider.Value.GetDbContextOptionsBuilder().Options);
+        }
+        private ApplicationDbContext GetDBContextFromSettings(DBSettingsBase dBSettingsobj) => new ApplicationDbContext(dBSettingsobj.GetDbContextOptionsBuilder().Options);
+
+        public int CheckCurrentConnection()
+        {            
+            using var dbc = GetDBContext();
+            return CheckConnection(dbc);
+        }
 
         public int CheckConnection(ApplicationDbContext dbContext)
         {
-            dbContext.Database.OpenConnection();
-            dbContext.Database.CloseConnection();
-            return 0;
+
+            try
+            {
+                dbContext.Database.OpenConnection();
+                //var qwe = dbContext.Database.GetDbConnection(); получаем объект коннекции, который поможет в отслеживании статуса коннекции
+                
+                return 0;
+            }
+            catch (Exception ex)
+            {
+
+                var vrEx = new Exception("Database connection faild!", ex);
+                
+                throw vrEx;
+            }
+            finally 
+            {
+                dbContext.Database.CloseConnection();
+            }
         }
 
         public int CheckConnection(DBSettingsBase dBSettingsobj) 
         {
 
-            using var dbContext = GetDBContext(dBSettingsobj);
+            using var dbContext = GetDBContextFromSettings(dBSettingsobj);
             CheckConnection(dbContext);
             return 0;
         }
@@ -142,7 +189,7 @@ namespace SnapManager.Data
         public int SetNewDbConfiguration(DBSettingsBase dBSettingsobj, bool createDbIfNotExist = true) 
         {
             if (!createDbIfNotExist) CheckConnection(dBSettingsobj);
-            using var dbCont = GetDBContext(dBSettingsobj);
+            using var dbCont = GetDBContextFromSettings(dBSettingsobj);
             dbCont.Database.Migrate();
             SaveDbSettingsToAppConfig(dBSettingsobj);
             
@@ -150,76 +197,5 @@ namespace SnapManager.Data
             InitializeDbConfigurationsFromAppSett();
             return 0;
         }
-        //============================================================================================================================================================================
-
-        //   
-
-        //    
-
-
-        //    private string GetNpgConnectionString() => configuration.GetConnectionString(Program.AllowedDBTypesCollections[AlloWedDBTypes.Npg] ?? throw new DBConfigurationException("Connection string \"PostgreSQL\" not found or not specified in appsetting.", 120));
-        //    private string GetMSConnectionString() => configuration.GetConnectionString(Program.AllowedDBTypesCollections[AlloWedDBTypes.MS] ?? throw new DBConfigurationException("Connection string \"MSSQLS\" not found or not specified in appsetting.", 120));
-
-        //    private AlloWedDBTypes GetSelectedDbProviderFromConfig() => Program.AllowedDBTypesCollections.FirstOrDefault(p => p.Value == configuration["DBType"]).Key;
-
-        //    public NpgDBSettings GetNpgSetting() 
-        //    {
-
-        //        var stringBuilder = new NpgsqlConnectionStringBuilder(GetNpgConnectionString());
-        //        NpgDBSettings settings = new ();
-        //        settings.Hostname = stringBuilder.Host;
-        //        settings.Port = stringBuilder.Port;
-        //        settings.Database = stringBuilder.Database;
-        //        settings.Username = stringBuilder.Username;
-        //        settings.Password = stringBuilder.Password;
-
-        //        return settings;
-
-        //    }
-
-        //    public NpgDBSettings GetMSSetting() 
-        //    {
-        //        var stringBuilder = new NpgsqlConnectionStringBuilder(GetNpgConnectionString());
-        //        NpgDBSettings settings = new ();
-        //        settings.Hostname = stringBuilder.Host;
-        //        settings.Port = stringBuilder.Port;
-        //        settings.Database = stringBuilder.Database;
-        //        settings.Username = stringBuilder.Username;
-        //        settings.Password = stringBuilder.Password;
-
-        //        return settings;
-
-        //    }
-
-        //    public async Task SetNpgSetting(NpgsqlConnectionStringBuilder strBuilder) 
-        //    {
-
-        //        var semaphore = new SemaphoreSlim(1,1);
-        //        await semaphore.WaitAsync();
-        //        try
-        //        {
-        //            var jsonText = await File.ReadAllTextAsync(Program.appsettingsPath);
-        //            var json = JsonNode.Parse(jsonText)!;
-        //            json["DBType"] = Program.AllowedDBTypesCollections[AlloWedDBTypes.Npg];
-
-        //            if (json["ConnectionStrings"] is not JsonObject) json["ConnectionStrings"] = new JsonObject();
-        //            json["ConnectionStrings"]!["PostgreSQL"] = strBuilder.ConnectionString;
-
-        //        }
-        //        finally { semaphore.Release(); }
-        //    }
-
-        //    public async Task SetNpgSetting(NpgDBSettings settings) 
-        //    {
-        //        var stringBuilder = new NpgsqlConnectionStringBuilder();
-        //        stringBuilder.Host = settings.Hostname;
-        //        stringBuilder.Port = settings.Port;
-        //        stringBuilder.Database = settings.Database;
-        //        stringBuilder.Username = settings.Username;
-        //        stringBuilder.Password = settings.Password;
-
-        //        await SetNpgSetting(stringBuilder);
-
-        //    }
     }
 }

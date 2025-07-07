@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using SnapManager.Data;
 using SnapManager.Models;
+using SnapManager.Services;
 using SnapManager.Views.WPF.WPFHelpers;
 using System;
 using System.Collections;
@@ -45,21 +46,19 @@ namespace SnapManager.Views.WPF
 
 
 
-        public DBSettingsWindowViewModel(DbService dbService, ErrorHandler errorHandler) : base(errorHandler)
+        public DBSettingsWindowViewModel(DbService dbService)
         {
             _dbService = dbService;
-            ErrorHandler.TryWindowed(() => Initialize(), instance: ErrorHandler);
-            
+            Initialize();
+
         }
         private void Initialize() 
         {
             foreach (var provider in _dbService.DbSettingsList)
             {
-
                 ProvidersList.Add(DBSettingsWindowDataGridRow.GetDBConfigurationRowCollection(provider, true));
             }
-            selectedDbProvider = ProvidersList.First(p => p.Key == _dbService.SelectedDbProvider.Key);
-            throw new NotImplementedException("This method is not implemented yet. Please implement the logic to initialize the selected database provider.");
+            selectedDbProvider = ProvidersList.First(p => p.Key == _dbService.SelectedDbProvider.Key);            
         }
 
         private string _log;
@@ -81,14 +80,10 @@ namespace SnapManager.Views.WPF
 
         private void Logging(string message)
         {
-            Log += ($"[{DateTime.Now:HH:mm:ss}] {message}\n");
-            
+            Log += ($"[{DateTime.Now:HH:mm:ss}] {message}\n");           
         }
 
-        public IEnumerable GetErrors(string? propertyName)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         private RelayCommand? makeConnection;
         public RelayCommand MakeConnection
@@ -121,7 +116,7 @@ namespace SnapManager.Views.WPF
                         catch (Exception ex) { MessageBox.Show(ex.Message); }
                         
                     },
-                    obj => !NativeMethods.HasValidationErrors((Window)obj)
+                    canExecute: obj => !NativeMethods.HasValidationErrors((Window)obj)
                     ));
 
 
@@ -138,13 +133,12 @@ namespace SnapManager.Views.WPF
                     (cancel = new RelayCommand(obj =>
                     {
                         var window = (Window)obj;
-                        ErrorHandler.TryWindowed(()=> Test(), "Db setting error:", instance: ErrorHandler);
+                        window.Close();
 
                     }));
             }
         }
 
-        private void Test() => throw new NotImplementedException("Cancel button");
 
         //private RelayCommand? _dropValidation;
 

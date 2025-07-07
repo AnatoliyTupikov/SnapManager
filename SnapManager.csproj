@@ -12,9 +12,13 @@
 
   <ItemGroup>
     <Compile Remove="appsettings\**" />
+    <Compile Remove="SnapManager.Migrations.NpgsqlServer\**" />
     <EmbeddedResource Remove="appsettings\**" />
+    <EmbeddedResource Remove="SnapManager.Migrations.NpgsqlServer\**" />
     <None Remove="appsettings\**" />
+    <None Remove="SnapManager.Migrations.NpgsqlServer\**" />
     <Page Remove="appsettings\**" />
+    <Page Remove="SnapManager.Migrations.NpgsqlServer\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,12 +27,20 @@
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+	  
+    
+	 
+	  
   </ItemGroup>
 	
     <ItemGroup>
@@ -51,6 +63,14 @@
 
   <ItemGroup>
     <Folder Include="Controllers\DB_Setting\" />
+    <Folder Include="Data\DesignTime\Migrations\NpgsqlServer\" />
   </ItemGroup>
+
+
+
+  
+
+
+
 
 </Project>
