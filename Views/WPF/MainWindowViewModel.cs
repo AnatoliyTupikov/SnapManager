@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SnapManager.Data;
 using SnapManager.Models;
-using SnapManager.Models.Hierarchy;
+using SnapManager.Models.WPFModels;
+using SnapManager.Models.WPFModels.Hierarchy;
 using SnapManager.Services;
 using SnapManager.Views.WPF;
 using SnapManager.Views.WPF.WPFHelpers;
@@ -52,27 +53,32 @@ namespace SnapManager.Views.WPF.WPFViewModels
                                 _dbService.CheckCurrentConnection();
                                 _dbService.GetDBContext().Database.Migrate();
 
-                                var testFolder = new FolderWithCredentials() { Children = new List<TreeItemBase>(), CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test Folder", Description = "Check!" };
-                                var testCredential1 = new Credential() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential 1", Description = "Check!", Username = "testuser", Password = "testpassword" };
-                                var testCredential2 = new Credential() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential 2", Description = "Check!", Username = "testuser", Password = "testpassword" };
+                                var testFolder = new FolderWithCredentialsWpfModel() { Children = new List<TreeItemWpfModel>(), CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test Folder", Description = "Check!" };
+                                var testCredential1 = new CredentialWpfModel() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential 1", Description = "Check!", Username = "testuser", Password = "testpassword" };
+                                var testCredential2 = new CredentialWpfModel() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential 2", Description = "Check!", Username = "testuser", Password = "testpassword" };
                                 
-                                var testFolder2 = new Folder() { Children = new List<TreeItemBase>(), CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test Folder2", Description = "Check!" };
-                                var testCredential21 = new Credential() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential 21", Description = "Check!", Username = "testuser", Password = "testpassword" };
-                                var testCredential22 = new Credential() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential 22", Description = "Check!", Username = "testuser", Password = "testpassword" };
+                                var testFolder2 = new FolderWpfModel() { Children = new List<TreeItemWpfModel>(), CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test Folder2", Description = "Check!" };
+                                var testCredential21 = new CredentialWpfModel() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential 21", Description = "Check!", Username = "testuser", Password = "testpassword" };
+                                var testCredential22 = new CredentialWpfModel() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential 22", Description = "Check!", Username = "testuser", Password = "testpassword" };
                                 testFolder2.Children.Add(testCredential21);
                                 testFolder2.Children.Add(testCredential22);
                                 //testFolder.Children.Add(testFolder2);
                                 testFolder.Children.Add(testCredential1);
                                 testFolder.Children.Add(testCredential2);
 
-                                var testFolderA = new FolderWithCredentials() { Children = new List<TreeItemBase>(), CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test FolderA", Description = "Check!" };
-                                var testCredentialA = new Credential() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential A", Description = "Check!", Username = "testuser", Password = "testpassword" };
+                                var testFolderA = new FolderWithCredentialsWpfModel() { Children = new List<TreeItemWpfModel>(), CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test FolderA", Description = "Check!" };
+                                var testCredentialA = new CredentialWpfModel() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential A", Description = "Check!", Username = "testuser", Password = "testpassword" };
+                                var testFolderB1 = new FolderWithCredentialsWpfModel() { Children = new List<TreeItemWpfModel>(), CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test FolderB1", Description = "Check!" };
+                                var testCredentialA1 = new CredentialWpfModel() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential A1", Description = "Check!", Username = "testuser", Password = "testpassword" };
+                                var testCredentialB1 = new CredentialWpfModel() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential B1", Description = "Check!", Username = "testuser", Password = "testpassword" };
                                 testFolderA.Children.Add(testCredentialA);
+                                testFolderB1.Children.AddRange(new List<CredentialWpfModel>() { testCredentialA1, testCredentialB1 });
+                                testFolderA.Children.Add(testFolderB1);
 
-                                var testCredentialB = new Credential() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential B", Description = "Check!", Username = "testuser", Password = "testpassword" };
+                                var testCredentialB = new CredentialWpfModel() { Children = null, CreationDateUTC = DateTime.UtcNow, ModificationDateUTC = DateTime.UtcNow, Name = "Test Credential B", Description = "Check!", Username = "testuser", Password = "testpassword" };
 
 
-                                var testFolderNoC = new Folder() { Children = new List<TreeItemBase>(), CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test FolderNoC", Description = "Check!" };
+                                var testFolderNoC = new FolderWpfModel() { Children = new List<TreeItemWpfModel>(), CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test FolderNoC", Description = "Check!" };
                                 //var testCredentialNoC1 = new Credential() { Children = null, CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test Credential NoC1", Description = "Check!", Username = "testuser", Password = "testpassword" };
                                 //var testCredentialNoC2 = new Credential() { Children = null, CreationDate = DateTime.UtcNow, ModificationDate = DateTime.UtcNow, Name = "Test Credential NoC2", Description = "Check!", Username = "testuser", Password = "testpassword" };
 
@@ -92,11 +98,11 @@ namespace SnapManager.Views.WPF.WPFViewModels
                                     //var forRemoveCreds = db.Credentials.FirstOrDefault();
                                     //db.TreeItems.Remove(forRemoveCreds!);
 
-                                    //db.Folders.Add(testFolder);
-                                    //db.Folders.Add(testFolderA);
-                                    //db.Credentials.Add(testCredentialB);
-                                    //db.Folders.Add(testFolderNoC);
-                                    //db.SaveChanges();
+                                    db.Folders.Add(testFolder);
+                                    db.Folders.Add(testFolderA);
+                                    db.Credentials.Add(testCredentialB);
+                                    db.Folders.Add(testFolderNoC);
+                                    db.SaveChanges();
                                 }
                             },
                             (Exception ex) => ErrorDialogService.ShowErrorMessage(ex, "Main message: \n"));

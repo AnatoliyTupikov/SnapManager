@@ -1,5 +1,6 @@
 ﻿using SnapManager.Data;
 using SnapManager.Models;
+using SnapManager.Models.WPFModels;
 using SnapManager.Views.WPF.WPFHelpers;
 using System;
 using System.Collections;
@@ -139,7 +140,5 @@ namespace SnapManager.Views.WPF
 
         }
 
-       
-        
     }
 }

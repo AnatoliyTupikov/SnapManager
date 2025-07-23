@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SnapManager.Models.Hierarchy;
+using SnapManager.Models.WPFModels.Hierarchy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +32,9 @@ namespace SnapManager.Views.WPF
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             var t = base.DataContext as CredentialsWindowViewModel;
-            var item = qwe.SelectedItem as TreeItemBase;
+            var item = qwe.SelectedItem as TreeItemWpfModel;
             item.IsExpanded = true;
-            item?.Children?.Add(new TreeItemBase() { Name = "New Credential", IsEditing = true, IsSelected = true });
+            item?.Children?.Add(new TreeItemWpfModel() { Name = "New Credential", IsEditing = true, IsSelected = true });
             
             CollectionViewSource.GetDefaultView(item.Children).Refresh();
             

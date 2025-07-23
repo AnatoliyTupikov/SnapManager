@@ -91,7 +91,7 @@ namespace SnapManager.Models
         /// <exception cref="FormatException">Если значение параметра имеет неверный формат.</exception>
         public override void Initialize(string? connectionstring) 
         { 
-            if (string.IsNullOrEmpty(connectionstring)) throw new DBConfigurationException($"Settings for the \"{this.DisplayProviderName}\" database are not specified.", 120, Services.Severity.Warning);
+            if (string.IsNullOrEmpty(connectionstring)) throw new DBConfigurationException($"Settings for the \"{DisplayProviderName}\" database are not specified.", 120, Services.Severity.Warning);
             
             Initialize(new NpgsqlConnectionStringBuilder(connectionstring)); 
         }

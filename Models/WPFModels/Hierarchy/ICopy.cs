@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SnapManager.Models.Hierarchy
+namespace SnapManager.Models.WPFModels.Hierarchy
 {
     public interface ICopy<T> where T : ICopy<T>
     {

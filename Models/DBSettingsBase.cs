@@ -25,7 +25,7 @@ namespace SnapManager.Models
         public virtual bool IsInitialized { get; protected set; } = false;
         public virtual string DisplayProviderName 
         {
-            get => this.GetType().GetCustomAttribute<DisplayAttribute>()?.Name ?? this.GetType().Name; 
+            get => GetType().GetCustomAttribute<DisplayAttribute>()?.Name ?? GetType().Name; 
         }
 
         public abstract void Initialize(string? connectionstring);

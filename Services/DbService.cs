@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Npgsql;
 using SnapManager.Exceptions;
 using SnapManager.Models;
+using SnapManager.Models.WPFModels;
 using SnapManager.Services;
 using SnapManager.Views.WPF.WPFHelpers;
 using System;
