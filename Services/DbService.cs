@@ -68,7 +68,8 @@ namespace SnapManager.Data
             GetSavedProviderConfigurationsFromAppSett();
             ErrorHandler.Try(
                 () => GetSelectedProviderFromAppSett(),
-                (Exception ex) => ErrorDialogService.ShowErrorMessage((ex)));
+                (Exception ex) => LoggerService.Log(ex, severity: LogSeverity.Warning));
+            //ErrorDialogService.ShowErrorMessage((ex)));
 
 
 
@@ -86,7 +87,8 @@ namespace SnapManager.Data
                 //Отсутствие нода (как конкретного по провайдеру, так и основного "ConnectionStrings") или в принципе файла: возвращает null
                 ErrorHandler.Try(
                     () => s.Value?.Initialize(cs),
-                    (Exception ex) => ErrorDialogService.ShowErrorMessage(ex, $"Configuration for \"{s.Key}\" provider can't be upload from Application Settings: \n "));
+                    (Exception ex) => LoggerService.Log(ex, $"Configuration for \"{s.Key}\" provider can't be upload from Application Settings:", LogSeverity.Error));
+                    //ErrorDialogService.ShowErrorMessage(ex, $"Configuration for \"{s.Key}\" provider can't be upload from Application Settings: \n"));
 
 
             }

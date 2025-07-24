@@ -6,18 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SnapManager.Models.DomainModels
 {
     [Table("credentials")]
-    public class CredentialDModel : TreeItemBaseDModel
+    public class CredentialDModel : TreeItemDModel
     {
-
         [MaxLength(256)]
         public string Username { get; set; }
 
         [MaxLength(1024)]
-        public string Password { get; set; }
-
-        public DateTime CreationDateUTC { get; set; }
-
-        public DateTime ModificationDateUTC { get; set; }
+        public string Password { get; set; }        
         
         [MaxLength(1024)]
         public string? Description { get; set; }

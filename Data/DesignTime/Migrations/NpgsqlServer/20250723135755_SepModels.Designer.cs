@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SnapManager.Data;
@@ -11,9 +12,11 @@ using SnapManager.Data;
 namespace SnapManager.Data.DesignTime.Migrations.NpgsqlServer
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250723135755_SepModels")]
+    partial class SepModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,12 +32,6 @@ namespace SnapManager.Data.DesignTime.Migrations.NpgsqlServer
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreationDateUTC")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("ModificationDateUTC")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -56,9 +53,15 @@ namespace SnapManager.Data.DesignTime.Migrations.NpgsqlServer
                 {
                     b.HasBaseType("SnapManager.Models.DomainModels.TreeItemDModel");
 
+                    b.Property<DateTime>("CreationDateUTC")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime>("ModificationDateUTC")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -77,9 +80,15 @@ namespace SnapManager.Data.DesignTime.Migrations.NpgsqlServer
                 {
                     b.HasBaseType("SnapManager.Models.DomainModels.TreeItemDModel");
 
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime>("ModificationDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.ToTable("folders");
                 });

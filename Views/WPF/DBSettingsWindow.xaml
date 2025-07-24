@@ -19,7 +19,7 @@
         
         <DataTemplate x:Key="IntDataTemplate">
             <muc:Spinner SpinnerValueInt="{Binding Path=Column2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         MinValue="1"
+                         MinValue="1024"
                          MaxValue="65535"
                          HorizontalAlignment="Left"
                          Width="75"

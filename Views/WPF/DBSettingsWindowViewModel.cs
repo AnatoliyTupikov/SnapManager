@@ -93,8 +93,21 @@ namespace SnapManager.Views.WPF
                 return makeConnection ??
                     (makeConnection = new RelayCommand(obj =>
                     {
+                        bool hasErrors = false;
+                        foreach (var row in SelectedDbProvider.Value)
+                        {
+                            var error = row[nameof(DBSettingsWindowDataGridRow.Column2)];
+                            if (!string.IsNullOrEmpty(error))
+                            {
+                                var oldValue = row.Column2;
+                                row.Column2 = oldValue;
+                                hasErrors = true;
+                            }
+                            
+                        }
+                        if (hasErrors) return;
 
-                        
+
                         Log = "";
                         foreach (var c in SelectedDbProvider.Value)
                         {

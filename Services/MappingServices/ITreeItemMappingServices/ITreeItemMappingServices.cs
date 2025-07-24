@@ -10,7 +10,7 @@ namespace SnapManager.Services.MappingServices.ITreeItemMappingServices
 {
     public interface ITreeItemMappingServices
     {
-        TreeItemWpfModel MapToWPFModel(TreeItemBaseDModel domainModel);
+        TreeItemWpfModel MapToWPFHierarchy(TreeItemDModel domainModel);
 
         //TreeItemBaseDModel MapToDomainModel(TreeItemWpfModel wpfModel);
     }

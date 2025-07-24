@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SnapManager.Views.WPF
+namespace SnapManager.Views.WPF.WPFHelpers
 {
     public class BaseViewModel : INotifyPropertyChanged
     {

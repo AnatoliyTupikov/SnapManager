@@ -10,11 +10,8 @@ using SnapManager.Models.WPFModels.Hierarchy;
 namespace SnapManager.Models.DomainModels
 {
     [Table("folders")]
-    public class FolderDModel : TreeItemBaseDModel
+    public class FolderDModel : TreeItemDModel
     {
-        public DateTime CreationDate { get; set; }
-        public DateTime ModificationDate { get; set; }
-
         [MaxLength(1024)]
         public string? Description { get; set; }
     }

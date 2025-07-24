@@ -23,7 +23,7 @@ namespace SnapManager.Views.WPF
 {
     public class CredentialsWindowViewModel : BaseViewModel, INotifyDataErrorInfo
     {
-        private readonly HierarchyService _hierarchyService;
+        private readonly WpfHierarchyService _hierarchyService;
 
         private readonly DbService _DBService;
 		public ObservableCollection<TreeItemWpfModel> CredHierarchy { get; set; } = new ObservableCollection<TreeItemWpfModel>();       
@@ -36,9 +36,9 @@ namespace SnapManager.Views.WPF
 			set { OnPropertyChanged<TreeItemWpfModel>(ref selectedItem, value); }
 		}		
 
-		public TreeItemWpfModel SelectedItemTemplateClone { get; set; }
+		//public TreeItemWpfModel SelectedItemTemplateClone { get; set; }
 
-		public CredentialsWindowViewModel( HierarchyService hs, DbService db )
+		public CredentialsWindowViewModel( WpfHierarchyService hs, DbService db )
         {
             _hierarchyService = hs;
 			_DBService = db;
@@ -80,7 +80,9 @@ namespace SnapManager.Views.WPF
 
 		}
 
-		private RelayCommand? selectedItemChanged;
+		private bool _skipChangeValidation = false;
+
+        private RelayCommand? selectedItemChanged;
 
 		public RelayCommand SelectedItemChanged
 		{
@@ -91,29 +93,35 @@ namespace SnapManager.Views.WPF
 					{
 
 						var income = (TreeItemWpfModel)obj;
-
                         if (income == null)
                         {
                             SelectedItem = null;
-                            SelectedItemTemplateClone = null;
+                            //SelectedItemTemplateClone = null;
                             return;
                         }
+                        
 
-                        if (SelectedItemTemplateClone != null && income.Id == SelectedItemTemplateClone.Id ) return;
-						
-						bool refresh = false;
-                        if (SelectedItem != null && (SelectedItem.IsEditing || SelectedItem.IsCreating))
+                        //if (SelectedItemTemplateClone != null && income.Id == SelectedItemTemplateClone.Id ) return;				
+
+                        bool refresh = false;
+                        if (SelectedItem != null && (SelectedItem.IsEditing || SelectedItem.IsCreating) && !(income.IsCreating || income.IsEditing) && !_skipChangeValidation)
 						{
+                            _skipChangeValidation = false;
                             string usaveChangesMessage = SelectedItem.IsCreating ? 
 							"The current item is creating.\n All not saved changes will be lost.\n Are you sure you want to stop creating this item?" 
 							: "The current item is editing.\n All not saved changes will be lost.\n Are you sure you want to stop editing this item?";
-                            var result = MessageBox.Show(usaveChangesMessage, "Stop Editing", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+							string windowTitle = SelectedItem.IsCreating ? "Stop Creating" : "Stop Editing";
+
+                            var result = MessageBox.Show(usaveChangesMessage, windowTitle, MessageBoxButton.YesNo, MessageBoxImage.Question);
 							if (result == MessageBoxResult.No)
 							{
 								Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>  //откладываем выполнения, иначе будет петля
 								{
-									selectedItem.IsSelected = true;
-								}), DispatcherPriority.Background);
+									
+                                    selectedItem.IsSelected = true;
+                                    //_skipChangeValidation = true;
+                                }), DispatcherPriority.Background);
 								return;
 							}
 							else
@@ -126,9 +134,10 @@ namespace SnapManager.Views.WPF
 								else undoChanges!.Execute(null);                               
 							}
                         }
-						this.SelectedItemTemplateClone = income?.Clone()!;
-                        
+                        //this.SelectedItemTemplateClone = income?.Clone()!;
+                        income.IsSelected = true;
                         this.SelectedItem = income!;
+						//_skipChangeValidation = false;
 
 						if(refresh) CollectionViewSource.GetDefaultView(CredHierarchy).Refresh();
 
@@ -155,10 +164,11 @@ namespace SnapManager.Views.WPF
                             this.RemoveSelectedItemAndSelectParent();
 							return;
                         }
-						selectedItem.CopyValueFrom(SelectedItemTemplateClone);
+						SelectedItem!.PullValuesFromDModel();
+						//selectedItem.CopyValueFrom(SelectedItemTemplateClone);
                         SelectedItem!.IsEditing = false;
                     },
-					canExecute: obj =>  SelectedItemTemplateClone != null && SelectedItem != null && !SelectedItem.Equals(SelectedItemTemplateClone) || (SelectedItem != null && SelectedItem.IsCreating)
+					canExecute: obj =>  /*SelectedItemTemplateClone != null && */SelectedItem != null && /*!SelectedItem.Equals(SelectedItemTemplateClone)*/ !SelectedItem.IsEqualToDModel() || (SelectedItem != null && SelectedItem.IsCreating)
                     ));
 			}
 
@@ -173,19 +183,42 @@ namespace SnapManager.Views.WPF
 				return saveChanges ??
 					(saveChanges = new RelayCommand(obj =>
 					{
-						using (var db = this._DBService.GetDBContext())
+						SelectedItem?.ValidateAllProperties();
+						if (SelectedItem == null || SelectedItem.HasErrors) return;
+
+                        using (var db = this._DBService.GetDBContext())
 						{
-							SelectedItem.IsEditing = false;
-							if ( SelectedItem is CredentialWpfModel cred) cred.ModificationDateUTC = DateTime.UtcNow;
-                            db.Attach(SelectedItem);
-							db.Entry(SelectedItem).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+							if (SelectedItem.IsCreating)
+							{
+								
+								SelectedItem.CreationDateUTC = DateTime.UtcNow;
+								SelectedItem.ModificationDateUTC = DateTime.UtcNow;
+								SelectedItem.CreateDModel();
+                                if (SelectedItem.DModel.Parent != null)  db.Attach(SelectedItem.DModel.Parent);
+                                db.TreeItems.Add(SelectedItem.DModel);
+                            }
+
+                            if (SelectedItem.IsEditing) 
+							{
+                                
+                                SelectedItem.ModificationDateUTC = DateTime.UtcNow;
+                                SelectedItem.UpdateValuesToDModel();
+                                db.Attach(SelectedItem.DModel);
+                                db.Entry(SelectedItem.DModel).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                            }
+
                             db.SaveChanges();
-						}
+                            SelectedItem.IsCreating = false;
+                            SelectedItem!.IsEditing = false;
+
+                        }
+                        _hierarchyService.SortHierarchy(CredHierarchy.ToList());
                         CollectionViewSource.GetDefaultView(CredHierarchy).Refresh();
                         var tw = obj as TreeView;
 						
                     },
-					canExecute: obj => SelectedItem != null && !SelectedItem.Equals(SelectedItemTemplateClone) && SelectedItemTemplateClone != null || (SelectedItem != null && SelectedItem.IsCreating)
+					canExecute: obj => 
+					SelectedItem != null && !SelectedItem.HasErrors && /*!SelectedItem.Equals(SelectedItemTemplateClone)*/ (!SelectedItem.IsEqualToDModel() || (SelectedItem != null && SelectedItem.IsCreating)) /*&& SelectedItemTemplateClone != null*/ 
 					));
 			}
 		}
@@ -199,8 +232,8 @@ namespace SnapManager.Views.WPF
 				return textChangedCommand ??
 					(textChangedCommand = new RelayCommand(obj =>
 					{
-						if (SelectedItem == null) return;
-                        if (!SelectedItem.Equals(SelectedItemTemplateClone)) SelectedItem.IsEditing = true;
+						if (SelectedItem == null || selectedItem.IsCreating) return;
+                        if (/*!SelectedItem.Equals(SelectedItemTemplateClone)*/ !SelectedItem.IsEqualToDModel()) SelectedItem.IsEditing = true;
 						else SelectedItem.IsEditing = false;
                         ValidateSelectedItem();
                     }));
@@ -215,8 +248,8 @@ namespace SnapManager.Views.WPF
 			get
 			{
 				return addMenu ??
-					(addMenu = new RelayCommand(obj => { },
-					canExecute: obj => SelectedItem == null ? true : !SelectedItem.IsCreating));
+					(addMenu = new RelayCommand(obj => {},
+					canExecute: obj => SelectedItem == null ? true : !(SelectedItem.IsCreating || SelectedItem.IsEditing)));
 			}
 
 		}
@@ -231,6 +264,7 @@ namespace SnapManager.Views.WPF
 				return addFolder ??
 					(addFolder = new RelayCommand(obj =>
 					{
+                        //if (SelectedItem.IsEditing) UndoChanges.Execute(null);
                         Window? owner = obj as Window;
                         var newFolder = new FolderWithCredentialsWpfModel
 						{	
@@ -238,6 +272,8 @@ namespace SnapManager.Views.WPF
                             IsExpanded = true,
 							IsSelected = true,
 							IsCreating = true,
+                            CreationDateUTC = DateTime.UtcNow,
+                            ModificationDateUTC = DateTime.UtcNow
 
                         };
 						this.AddItem(owner, newFolder);
@@ -256,6 +292,7 @@ namespace SnapManager.Views.WPF
 				return addCredential ??
 					(addCredential = new RelayCommand(obj =>
 					{
+                        //if (SelectedItem.IsEditing) UndoChanges.Execute(null);
                         Window? owner = obj as Window;
                         var newCred = new CredentialWpfModel
                         {
@@ -278,6 +315,7 @@ namespace SnapManager.Views.WPF
             if (selectedItem == null)
             {
                 CredHierarchy.Add(item);
+				SelectedItem = item;
                 return;
             }
             else
@@ -294,9 +332,12 @@ namespace SnapManager.Views.WPF
                         return;
                     }
                 }
-                _hierarchyService.AddChildToParentWithSearchUp(SelectedItem, item);
+                _hierarchyService.AddChildToParentWithSearchUpFolder(SelectedItem, item);
                 if (item.Parent == null) CredHierarchy.Add(item);
                 SelectedItem.IsExpanded = true;
+				SelectedItem = item;
+				//SelectedItemTemplateClone = SelectedItem.Clone();
+				_skipChangeValidation = true;
                 CollectionViewSource.GetDefaultView(CredHierarchy).Refresh();
             }
         }
@@ -327,10 +368,10 @@ namespace SnapManager.Views.WPF
         private void RemoveSelectedItemAndSelectParent()
 		{
             if (SelectedItem.IsEditing) UndoChanges.Execute(null);
-            var temp = SelectedItem.Parent;
-			this.RemoveSelectedItem();
-            if (temp != null) temp.IsSelected = true;
-            SelectedItemChanged.Execute(temp ?? CredHierarchy.FirstOrDefault() ?? null);
+            var temp = SelectedItem.Parent;            
+            this.RemoveSelectedItem();
+            //this._skipChangeValidation = true;	
+            SelectedItemChanged.Execute(temp ?? CredHierarchy.FirstOrDefault() ?? null);            
             CollectionViewSource.GetDefaultView(CredHierarchy).Refresh();
         }
 
@@ -347,10 +388,30 @@ namespace SnapManager.Views.WPF
             {
                 if (selectedItem.Parent != null) _hierarchyService.RemoveChildFromParent(SelectedItem);
             }
-            CredHierarchy.Remove(SelectedItem);
+			var temp = SelectedItem;
+            SelectedItem.IsSelected = false;
+			SelectedItem = null!;
+            CredHierarchy.Remove(temp);
+			
         }
 
-        private readonly Dictionary<string, List<string>> _errors = new();
+		private RelayCommand? validationModelTrigger;
+
+		public RelayCommand ValidationModelTrigger
+		{
+			get
+			{
+				return validationModelTrigger ??
+					(validationModelTrigger = new RelayCommand(obj =>
+					{
+						SelectedItem.ValidateAllProperties();
+					}));
+			}
+
+		}
+
+
+		private readonly Dictionary<string, List<string>> _errors = new();
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 

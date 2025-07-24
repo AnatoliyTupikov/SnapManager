@@ -33,11 +33,13 @@ namespace SnapManager
             ErrorHandler.Try(
                 ()=> { Go(); },
                 (Exception ex)=> ErrorDialogService.ShowErrorMessage(ex, "Error while starting app:", severity: Severity.Error) );
+
         }
 
         public static void Go()
         {
-            AppHost = Host
+            
+                AppHost = Host
                 // создаем хост приложения
                 .CreateDefaultBuilder()
                 .ConfigureWebHostDefaults(configure =>
@@ -53,7 +55,7 @@ namespace SnapManager
                     services.AddSingleton<App>();
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<DbService>();
-                    services.AddSingleton<HierarchyService>();
+                    services.AddSingleton<WpfHierarchyService>();
 
                 })
                 .ConfigureAppConfiguration(config =>
@@ -61,12 +63,14 @@ namespace SnapManager
                     config.AddJsonFile(appsettingsPath, optional: true, reloadOnChange: true);
                 })
                 .Build();
-            // получаем сервис - объект класса App
-            var app = AppHost.Services.GetService<App>();
+                // получаем сервис - объект класса App
+                var app = AppHost.Services.GetService<App>();
 
-            AppHost.Start();
+                AppHost.Start();
 
-            app?.Run();
+                app?.Run();
+            
+
 
             // запускаем приложения
         }

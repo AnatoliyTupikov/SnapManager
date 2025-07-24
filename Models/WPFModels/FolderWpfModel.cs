@@ -12,38 +12,44 @@ namespace SnapManager.Models.WPFModels
 {
     public class FolderWpfModel : TreeItemWpfModel
     {
-        public DateTime CreationDate { get; set; }
-        public DateTime ModificationDate { get; set; }
+        public FolderDModel? CastedDModel 
+        { 
+            get 
+            { 
+                var res = base.DModel as FolderDModel;
+                if (res == null) throw new InvalidOperationException("DModel is not of type FolderDModel.");
+                return res;
+            }
+        }
 
-        public string? Description { get; set; }
+        private string? description;
+
+        public string? Description
+        {
+            get { return description; }
+            set { OnPropertyChanged<string?>(ref description, value); }
+        }
+
 
         public FolderWpfModel()
         {
             DModel = new FolderDModel();
         }
-
-        public override bool Equals(TreeItemWpfModel? other)
+        public override void UpdateValuesToDModel()
         {
-            if (other == null) return false;
-            if (other is not FolderWpfModel otherFolder) return false;
-            return base.Equals(other) && Description == otherFolder.Description;
+            CastedDModel!.Description = Description;
+            base.UpdateValuesToDModel();
+        }
+        public override void PullValuesFromDModel()
+        {
+            Description = CastedDModel!.Description;
+            base.PullValuesFromDModel();
         }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(base.GetHashCode(), Description);
-        }
-
-        public override void CopyValueFrom(TreeItemWpfModel source)
-        {
-            if (source is not FolderWpfModel folderSource)
-            {
-                throw new InvalidOperationException("Source must be of type Folder.");
-            }            
-            CreationDate = folderSource.CreationDate;
-            ModificationDate = folderSource.ModificationDate;
-            Description = folderSource.Description;
-            base.CopyValueFrom(source);
+        public override bool IsEqualToDModel()
+        {           
+            return base.IsEqualToDModel() &&
+                   Description == CastedDModel!.Description;
         }
 
     }

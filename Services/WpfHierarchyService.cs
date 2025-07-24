@@ -2,8 +2,10 @@
 using Microsoft.IdentityModel.Tokens;
 using SnapManager.Data;
 using SnapManager.Data.DesignTime.Migrations.NpgsqlServer;
+using SnapManager.Models.DomainModels;
 using SnapManager.Models.WPFModels;
 using SnapManager.Models.WPFModels.Hierarchy;
+using SnapManager.Services.MappingServices.ITreeItemMappingServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +14,18 @@ using System.Threading.Tasks;
 
 namespace SnapManager.Services
 {
-    public class HierarchyService
+    public class WpfHierarchyService
     {
 
         
         public List<TreeItemWpfModel> GetCredsHierarchyFromDB(ApplicationDbContext db)
         {
             db.TreeItems.Include("Children").Load();
-            List<TreeItemWpfModel> result = db.TreeItems.Where(p => (p.GetType() == typeof(FolderWithCredentialsWpfModel) || p.GetType() == typeof(CredentialWpfModel))).ToList();
-            List<TreeItemWpfModel> res = result.Where(p => p.Parent is null).ToList();
-            SortHierarchy(res);
+            List<TreeItemDModel> result = db.TreeItems.Where(p => (p.GetType() == typeof(FolderWithCredentialsDModel) || p.GetType() == typeof(CredentialDModel))).ToList();
+            List<TreeItemDModel> res = result.Where(p => p.Parent is null).ToList();
+            var wpfMappingService = new TreeItemMappingServices();
+            List<TreeItemWpfModel> resMapped = res.Select(p => wpfMappingService.MapToWPFHierarchy(p)).ToList();
+            SortHierarchy(resMapped);
             //.OrderBy(p => 
             //{
             //    if (p is Folder) return 0; // Folders should be at the top
@@ -30,7 +34,7 @@ namespace SnapManager.Services
             //})
             //.ThenBy(p => p.Name)
             //.ToList();
-            return res;
+            return resMapped;
         }
 
         public void SortHierarchy(List<TreeItemWpfModel> hierarchy)
@@ -75,7 +79,7 @@ namespace SnapManager.Services
             WalkThroughHierarchy_IdScope(hierarchylevel, action, action_scope_id_int);
         }
 
-        public void AddChildToParent(FolderWpfModel parent, TreeItemWpfModel child)
+        public void AddChildToParent(TreeItemWpfModel parent, TreeItemWpfModel child)
         {            
             if (parent.Children is null) parent.Children = new List<TreeItemWpfModel>();
             if (child.Parent != null) throw new InvalidOperationException("Child already has a parent");
@@ -83,7 +87,7 @@ namespace SnapManager.Services
             child.Parent = parent;
         }
 
-        public void AddChildToParentWithSearchUp(TreeItemWpfModel parent, TreeItemWpfModel child)
+        public void AddChildToParentWithSearchUpFolder(TreeItemWpfModel parent, TreeItemWpfModel child)
         {
             if (parent is FolderWpfModel folderParent)
             {
@@ -93,7 +97,7 @@ namespace SnapManager.Services
             else
             {
                 if (parent.Parent is null) {child.Parent = null; return; }
-                AddChildToParentWithSearchUp(parent.Parent, child);
+                AddChildToParentWithSearchUpFolder(parent.Parent, child);
             }
         }
 
@@ -114,7 +118,7 @@ namespace SnapManager.Services
         public void ChangeParentWithSearchUp(TreeItemWpfModel child, TreeItemWpfModel newParent)
         {
             if (child.Parent != null) RemoveChildFromParent(child);
-            AddChildToParentWithSearchUp(newParent, child);
+            AddChildToParentWithSearchUpFolder(newParent, child);
         }      
 
         public void RemoveItemFromHierarchy(TreeItemWpfModel item, ApplicationDbContext? db = null)
@@ -131,7 +135,7 @@ namespace SnapManager.Services
             }
             if (db != null)
             {
-                db.TreeItems.Remove(item);
+                db.TreeItems.Remove(item.DModel);
                 db.SaveChanges();
             }
         }

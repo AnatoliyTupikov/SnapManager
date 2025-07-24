@@ -1,8 +1,10 @@
 ﻿using SnapManager.Models.DomainModels;
+using SnapManager.Views.WPF.WPFHelpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -12,123 +14,122 @@ using Xceed.Wpf.Toolkit.Primitives;
 
 namespace SnapManager.Models.WPFModels.Hierarchy
 {
-    [Table("TreeItems")]
-    public class TreeItemWpfModel : IEquatable<TreeItemWpfModel>, ICopy<TreeItemWpfModel>, INotifyPropertyChanged, INotifyDataErrorInfo
+    public class TreeItemWpfModel : BaseViewModel, INotifyDataErrorInfo
     {
         
-        public TreeItemBaseDModel DModel { get; init; }
+        public TreeItemDModel DModel { get; init; }
 
         public int Id { get => DModel.Id; }
 
+
         private string name;
 
+        [Required(ErrorMessage = "Name can not be emty.")]
         public string Name
         {
-            get => name;
-            set
-            {
-                if (name != value)
-                {
-                    name = value;
-                    OnPropertyChanged(nameof(name));
-                    ValidateSelectedItem();
-                }
-            }
+            get { return name; }
+            set { OnPropertyChanged<string>(ref name, value); ValidateProperty(value, nameof(Name)); }
         }
+
         public TreeItemWpfModel? Parent { get; set; }
         public List<TreeItemWpfModel>? Children { get; set; }
 
+        public DateTime CreationDateUTC { get; set; }
+
+        public DateTime CreationDateLocal
+        {
+            get => CreationDateUTC.ToLocalTime();            
+        }
+
+        public DateTime ModificationDateUTC { get; set; }
+
+        public DateTime ModificationDateLocal
+        {
+            get => ModificationDateUTC.ToLocalTime();            
+        }
 
         private bool isExpanded = false;
+
         public bool IsExpanded
         {
-            get => isExpanded;
-            set
-            {
-                if (isExpanded != value)
-                {
-                    isExpanded = value;
-                    OnPropertyChanged(nameof(isExpanded)); 
-                }
-            }
+            get { return isExpanded; }
+            set { OnPropertyChanged<bool>(ref isExpanded, value); }
         }
 
         private bool isSelected = false;
+
         public bool IsSelected
         {
-            get => isSelected;
-            set
-            {
-                if (isSelected != value)
-                {
-                    isSelected = value;
-                    OnPropertyChanged(nameof(isSelected));
-                }
-            }
+            get { return isSelected; }
+            set { OnPropertyChanged<bool>(ref isSelected, value); }
         }
 
+        private bool isEditing = false;
 
-        private bool isEditing = false;      
-        
         public bool IsEditing
         {
-            get => isEditing;
-            set
-            {
-                if (isEditing != value)
-                {
-                    isEditing = value;
-                    OnPropertyChanged(nameof(IsEditing));  // уведомляем UI
-                }
-            }
+            get { return isEditing; }
+            set { OnPropertyChanged<bool>(ref isEditing, value); }
         }
 
         private bool isCreating = false;
 
         public bool IsCreating
         {
-            get => isCreating;
-            set
-            {
-                if (isCreating != value)
-                {
-                    isCreating = value;
-                    OnPropertyChanged(nameof(IsCreating));  // уведомляем UI
-                }
-            }
-        } 
+            get { return isCreating; }
+            set { OnPropertyChanged<bool>(ref isCreating, value); }
+        }
+
+
+        
         
 
         public TreeItemWpfModel()
         {
-            DModel = new TreeItemBaseDModel();
+            Name = string.Empty;
+            DModel = new TreeItemDModel();
+            CreationDateUTC = DateTime.UtcNow;
+            ModificationDateUTC = DateTime.UtcNow;
         }
 
+        
 
+        public void UpdateHirerarchyToDModel()
+        {            
+            DModel.Parent = Parent?.DModel;
+            DModel.Children = Children?.Select(c => c.DModel).ToList() ?? new List<TreeItemDModel>();
+        }
 
-        public TreeItemWpfModel Clone()
+        public void CreateDModel() 
         {
-           return MemberwiseClone() as TreeItemWpfModel ?? throw new InvalidOperationException("Failed to clone TreeItemBase.");
+            UpdateHirerarchyToDModel();
+            UpdateValuesToDModel();
+            DModel.CreationDateUTC = CreationDateUTC;
+        }
+        public virtual void UpdateValuesToDModel()
+        {
+            DModel.Name = Name;
+            DModel.ModificationDateUTC = ModificationDateUTC;
         }
 
-        public virtual void CopyValueFrom(TreeItemWpfModel source)
+        public virtual void PullValuesFromDModel()
         {
-            Name = source.Name;            
-            IsEditing = source.IsEditing;
-            IsCreating = source.IsCreating;
-            Parent = source.Parent;
-            Children = source.Children;
+            Name = DModel.Name;
+            CreationDateUTC = DModel.CreationDateUTC;
+            ModificationDateUTC = DModel.ModificationDateUTC;            
         }
 
-        public virtual bool Equals(TreeItemWpfModel? other)
+        public virtual bool IsEqualToDModel()
         {
-            if (other == null) return false;
-            return Name == other.Name;
+            if (this.DModel == null) return false;
+            return Name == DModel.Name &&
+                   CreationDateUTC == DModel.CreationDateUTC &&
+                   ModificationDateUTC == DModel.ModificationDateUTC;
         }
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Name);
-        }
+
+
+        //--------------------------------------------------Validadation logic--------------------------------------------------//
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -143,36 +144,84 @@ namespace SnapManager.Models.WPFModels.Hierarchy
 
         public bool HasErrors => _errors.Any();
 
-
-        public IEnumerable GetErrors(string? propertyName)
+        public IEnumerable GetErrors(string propertyName)
         {
-            return _errors.TryGetValue(propertyName, out var errors) ? errors : null;
+            return _errors.ContainsKey(propertyName) ? _errors[propertyName] : null;
         }
+
+
+        protected void ValidateProperty(object value, string propertyName)
+        {
+            ClearErrors(propertyName);
+
+            var context = new ValidationContext(this)
+            {
+                MemberName = propertyName
+            };
+
+            var results = new List<ValidationResult>();
+
+            bool isValid = Validator.TryValidateProperty(value, context, results);
+
+            if (!isValid)
+            {
+                foreach (var validationResult in results)
+                {
+                    AddError(propertyName, validationResult.ErrorMessage);
+                }
+            }
+        }
+
+        public void ValidateAllProperties()
+        {
+            // Очистим все старые ошибки
+            var propertyNames = _errors.Keys.ToList();
+            foreach (var propertyName in propertyNames)
+                ClearErrors(propertyName);
+
+            var context = new ValidationContext(this);
+            var results = new List<ValidationResult>();
+
+            // Проверка всех свойств по атрибутам
+            Validator.TryValidateObject(this, context, results, validateAllProperties: true);
+
+            foreach (var validationResult in results)
+            {
+                foreach (var memberName in validationResult.MemberNames)
+                {
+                    AddError(memberName, validationResult.ErrorMessage);
+                }
+            }
+        }
+
+
+        protected void AddError(string propertyName, string error)
+        {
+            if (!_errors.ContainsKey(propertyName))
+                _errors[propertyName] = new List<string>();
+
+            if (!_errors[propertyName].Contains(error))
+            {
+                _errors[propertyName].Add(error);
+                OnErrorsChanged(propertyName);
+            }
+        }
+
+        protected void ClearErrors(string propertyName)
+        {
+            if (_errors.ContainsKey(propertyName))
+            {
+                _errors.Remove(propertyName);
+                OnErrorsChanged(propertyName);
+            }
+        }
+    
         private void OnErrorsChanged(string propertyName)
         {
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
 
-        private void SetErrors(string propertyName, List<string> errors)
-        {
-            bool changed = !_errors.ContainsKey(propertyName) || !_errors[propertyName].SequenceEqual(errors);
-
-            if (errors.Any())
-                _errors[propertyName] = errors;
-            else
-                _errors.Remove(propertyName);
-
-            if (changed)
-                OnErrorsChanged(propertyName);
-        }
-
-        private void ValidateSelectedItem()
-        {
-            var errors = new List<string>();
-            if (string.IsNullOrWhiteSpace(Name) ) errors.Add("Name cannot be empty.");
-            SetErrors(nameof(Name), errors);
-
-        }
+        
 
     }
     

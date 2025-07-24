@@ -14,15 +14,17 @@ using Xceed.Wpf.Toolkit.Primitives;
 namespace SnapManager.Models.DomainModels
 {
     [Table("hierarchy_scheme")]
-    public class TreeItemBaseDModel
+    public class TreeItemDModel
     {        
     
         public int Id { get; set; }        
         public string Name { get; set; }
-        public TreeItemBaseDModel? Parent { get; set; }
-        public List<TreeItemBaseDModel>? Children { get; set; }        
+        public TreeItemDModel? Parent { get; set; }
+        public List<TreeItemDModel>? Children { get; set; }
+        public DateTime CreationDateUTC { get; set; }
+        public DateTime ModificationDateUTC { get; set; }
 
-       
+
 
     }
     

@@ -83,11 +83,34 @@ namespace SnapManager.Views.WPF
 
                 if (columnName == nameof(Column2))
                 {
-                    if (_attributes.Exists(p => p.GetType() == typeof(RequiredAttribute)) && (Column2 is null || string.IsNullOrEmpty(Column2?.ToString()))) 
+                    if (_attributes.Exists(p => p.GetType() == typeof(RequiredAttribute)) && (Column2 is null || string.IsNullOrWhiteSpace(Column2?.ToString()))) 
                     {
-                        const string errorMessage = "Value cannot be null";
+                        var attr = _attributes.First(p => p.GetType() == typeof(RequiredAttribute)) as RequiredAttribute;                        
+                        string errorMessage = attr.ErrorMessage ?? "Value cannot be null";
                         _errors.Add(columnName, new List<string> { errorMessage });
                         return errorMessage; 
+                    }
+
+                    if (_attributes.Exists(p => p.GetType() == typeof(StringLengthAttribute)) && Column2 is string strValue) 
+                    {
+                        var attr = _attributes.First(p => p.GetType() == typeof(StringLengthAttribute)) as StringLengthAttribute;
+                        if (strValue.Length < attr.MinimumLength || strValue.Length > attr.MaximumLength) 
+                        {
+                            string errorMessage = attr.ErrorMessage ?? $"Value length must be between {attr.MinimumLength} and {attr.MaximumLength} characters.";
+                            _errors.Add(columnName, new List<string> { errorMessage });
+                            return errorMessage;
+                        }
+                    }
+
+                    if (_attributes.Exists(p => p.GetType() == typeof(RangeAttribute)) && Column2 is IComparable comparableValue) 
+                    {
+                        var attr = _attributes.First(p => p.GetType() == typeof(RangeAttribute)) as RangeAttribute;
+                        if (comparableValue.CompareTo(attr.Minimum) < 0 || comparableValue.CompareTo(attr.Maximum) > 0) 
+                        {
+                            string errorMessage = attr.ErrorMessage ?? $"Value must be between {attr.Minimum} and {attr.Maximum}.";
+                            _errors.Add(columnName, new List<string> { errorMessage });
+                            return errorMessage;
+                        }
                     }
                 }
                 return null!;

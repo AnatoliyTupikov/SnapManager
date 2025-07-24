@@ -9,62 +9,72 @@ namespace SnapManager.Models.WPFModels
     [Table("Credentials")]
     public class CredentialWpfModel : TreeItemWpfModel
     {
-        public CredentialDModel? CustedDModel { get => base.DModel as CredentialDModel; }
-        public string? Username { get; set; }
-
-        public string? Password { get; set; }
-
-        public string? Description { get; set; }
-
-        public DateTime? CreationDateUTC { get; set; }
-
-        public DateTime? CreationDateLocal { 
-            get
-            {   if (CreationDateUTC == null) return null;             
-                return CreationDateUTC?.ToLocalTime();
-            } }
-
-        public DateTime? ModificationDateUTC { get; set; }
-
-        public DateTime? ModificationDateLocal
+        public CredentialDModel? CastedDModel
         {
             get
             {
-                if (ModificationDateUTC == null) return null;
-                return ModificationDateUTC?.ToLocalTime();
+                var res = base.DModel as CredentialDModel;
+                if (res == null) throw new InvalidOperationException("DModel is not of type CredentialDModel.");
+                return res;
             }
-        }           
+        }
+
+        private string username;
+
+        [Required(ErrorMessage = "Username is required.")]
+        public string Username
+        {
+            get { return username; }
+            set { OnPropertyChanged<string>(ref username, value); ValidateProperty(value, nameof(Username)); }
+        }
+
+
+        private string password;
+        [Required(ErrorMessage = "Password is required.")]
+        public string Password
+        {
+            get { return password; }
+            set { OnPropertyChanged<string>(ref password, value); ValidateProperty(value, nameof(Password)); }
+        }
+
+        private string? description;
+
+        public string? Description
+        {
+            get { return description; }
+            set { OnPropertyChanged<string?>(ref description, value); }
+        }
 
         public CredentialWpfModel()
         {
+            username = string.Empty;
+            password = string.Empty;
             DModel = new CredentialDModel();
         }
-        public override bool Equals(TreeItemWpfModel? other)
+
+        public override void UpdateValuesToDModel()
         {
-            if (other == null) return false;
-            if (other is not CredentialWpfModel otherCredential) return false;
-            return base.Equals(other) && Username == otherCredential.Username && Password == otherCredential.Password && Description == otherCredential.Description;
+
+            CastedDModel!.Username = Username;
+            CastedDModel!.Password = Password;
+            CastedDModel!.Description = Description;
+            base.UpdateValuesToDModel();
         }
 
-        public override int GetHashCode()
+        public override void PullValuesFromDModel()
         {
-            return HashCode.Combine(base.GetHashCode(), Username, Password);
+            Username = CastedDModel!.Username;
+            Password = CastedDModel!.Password;
+            Description = CastedDModel!.Description;
+            base.PullValuesFromDModel();
         }
 
-        public override void CopyValueFrom(TreeItemWpfModel source)
+        public override bool IsEqualToDModel()
         {
-            if (source is not CredentialWpfModel credentialSource)
-            {
-                throw new InvalidOperationException("Source must be of type Credential.");
-            }
-            Username = credentialSource.Username;
-            Password = credentialSource.Password;
-            CreationDateUTC = credentialSource.CreationDateUTC;
-            ModificationDateUTC = credentialSource.ModificationDateUTC;
-            Description = credentialSource.Description;
-            base.CopyValueFrom(source);
+            return base.IsEqualToDModel() &&
+                   Username == CastedDModel!.Username &&
+                   Password == CastedDModel!.Password &&
+                   Description == CastedDModel!.Description;
         }
-
-
     }
 }
