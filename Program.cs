@@ -44,7 +44,7 @@ namespace SnapManager
                 .CreateDefaultBuilder()
                 .ConfigureWebHostDefaults(configure =>
                 {
-                    configure.UseUrls("http://localhost123:5005");
+                    configure.UseUrls("https://localhost:5005");
                     configure.UseStartup<WebServerStartup>();
 
                 })
@@ -61,7 +61,7 @@ namespace SnapManager
                 .ConfigureAppConfiguration(config =>
                 {
                     config.AddJsonFile(appsettingsPath, optional: true, reloadOnChange: true);
-                })
+                })                
                 .Build();
                 // получаем сервис - объект класса App
                 var app = AppHost.Services.GetService<App>();

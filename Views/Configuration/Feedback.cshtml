@@ -1,0 +1,36 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_ConfigurationLayout.cshtml";
+}
+<style>
+    #temp{
+        display: flex;
+        flex-direction: column;   
+        align-items: stretch;
+    }
+    audio{        
+        width: 720px;       
+    }
+
+</style>
+<main id="temp">
+    <h1 style="border-bottom: solid 1px #606060">Feedback</h1>
+
+    <h3>Так студент, Анатолий, кричит:</h3>
+    <div>
+        <audio controls>
+            <source src="~/sources/bot-student.mp3" type="audio/mpeg">
+            <source src="~/sources/bot-student.wav" type="audio/wav">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+    
+    <h3>A так работа звучит:</h3>
+    <video width="720" height="480" controls>
+        <source src="~/sources/bild_merge_push.mp4" type="video/mp4">
+        <source src="~/sources/bild_merge_push.avi" type="video/avi">
+        Your browser does not support the video element.
+    </video>
+</main>

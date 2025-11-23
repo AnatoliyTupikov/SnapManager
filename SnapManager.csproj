@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -22,7 +22,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\WPF\VSphereWindow.xaml.cs" />
+    <Compile Remove="Views\WPF\VSphereWindowViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\sources\loading.gif" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="red.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="Views\WPF\VSphereWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,6 +65,7 @@
     </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="wwwroot\sources\loading.gif" />
     <Resource Include="wwwroot\sources\red.png" />
   </ItemGroup>
 
@@ -64,6 +78,20 @@
   <ItemGroup>
     <Folder Include="Controllers\DB_Setting\" />
     <Folder Include="Data\DesignTime\Migrations\NpgsqlServer\" />
+    <Folder Include="wwwroot\styles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\WPF\VSphereWindow.xaml">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </None>
+    <None Include="Views\WPF\VSphereWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\WPF\VSphereWindowViewModel.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 

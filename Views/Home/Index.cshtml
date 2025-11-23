@@ -1,0 +1,32 @@
+﻿
+<style>
+    .content {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-items: center;
+        align-items: stretch;
+    }
+    .cell {
+        background: lightseagreen;
+        border: 1px solid;
+    }
+
+    .gutter {
+        background-color: red;
+        cursor: col-resize;
+    }
+</style>
+<script src="~/lib/split.min/split.min.js"></script>
+
+<div class="content">
+    <div class="cell a">A</div>
+    <div class="cell b">B</div>
+    <div class="cell c">C</div>
+</div>
+<script>
+    Split(['.a', '.b', '.c']);
+</script>
+
+

@@ -17,13 +17,18 @@ namespace SnapManager.Controllers.Test
         }
         public IActionResult Index()
         {
-            return Content("Привет, мир! Это простой эндпойнт.");
+            return View();
         }
 
         // Эндпойнт, который будет обрабатывать запросы на /Home/Greet
         public IActionResult Greet()
         {
             return Content("Привет от контроллера!");
+        }
+
+        public IActionResult CredentialsWizard()
+        {
+            return View();
         }
     }
 }

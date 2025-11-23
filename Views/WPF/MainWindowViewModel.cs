@@ -3,7 +3,6 @@ using SnapManager.Data;
 using SnapManager.Models;
 using SnapManager.Models.DomainModels;
 using SnapManager.Models.WPFModels;
-using SnapManager.Models.WPFModels.Hierarchy;
 using SnapManager.Services;
 using SnapManager.Views.WPF.WPFHelpers;
 using System;

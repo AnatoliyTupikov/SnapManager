@@ -2,10 +2,9 @@
 using Microsoft.IdentityModel.Tokens;
 using SnapManager.Data;
 using SnapManager.Data.DesignTime.Migrations.NpgsqlServer;
-using SnapManager.Models.DomainModels;
-using SnapManager.Models.WPFModels;
-using SnapManager.Models.WPFModels.Hierarchy;
-using SnapManager.Services.MappingServices.ITreeItemMappingServices;
+using SnapManager.Models.DomainModels.CredentialsHierarchy;
+using SnapManager.Models.WPFModels.CredentialHierarchy;
+using SnapManager.Services.MappingServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +22,8 @@ namespace SnapManager.Services
             db.TreeItems.Include("Children").Load();
             List<TreeItemDModel> result = db.TreeItems.Where(p => (p.GetType() == typeof(FolderWithCredentialsDModel) || p.GetType() == typeof(CredentialDModel))).ToList();
             List<TreeItemDModel> res = result.Where(p => p.Parent is null).ToList();
-            var wpfMappingService = new TreeItemMappingServices();
-            List<TreeItemWpfModel> resMapped = res.Select(p => wpfMappingService.MapToWPFHierarchy(p)).ToList();
+            var wpfMappingService = new TreeItemMappingService();
+            List<TreeItemWpfModel> resMapped = res.Select(p => wpfMappingService.MapToWievModel(p)).ToList();
             SortHierarchy(resMapped);
             //.OrderBy(p => 
             //{
@@ -139,6 +138,11 @@ namespace SnapManager.Services
                 db.SaveChanges();
             }
         }
+
+        //public void GetVSpheereServersList(ApplicationDbContext db) 
+        //{
+        //    db.VSphereServers.Include("Credential").Load();
+        //}
 
 
 

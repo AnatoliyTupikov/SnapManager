@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SnapManager.Models.WPFModels.Hierarchy;
+using SnapManager.Models.WPFModels.CredentialHierarchy;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using SnapManager.Models.DomainModels;
+using SnapManager.Models.DomainModels.CredentialsHierarchy;
 using SnapManager.Models.WPFModels;
-using SnapManager.Models.WPFModels.Hierarchy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +20,9 @@ namespace SnapManager.Data
         public DbSet<FolderDModel> Folders { get; set; } = null!;
         public DbSet<FolderWithCredentialsDModel> FoldersWithCredentials { get; set; } = null!;
         public DbSet<CredentialDModel> Credentials { get; set; } = null!;
-        
+
+        //public DbSet<VSphereServerDModel> VSphereServers { get; set; } = null!;
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
         {
            

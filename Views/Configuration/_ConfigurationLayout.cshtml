@@ -1,0 +1,107 @@
+﻿@{
+    Layout = "_Layout";
+    ViewBag.ShowNavigation = false;
+}
+@section Title {
+        Configuration
+}
+<script src="~/scripts/modules/module-support-check.js"></script>
+<script type="module" src="~/scripts/configuration-layout.js"></script>
+
+<style>
+    main {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: stretch;        
+    }
+
+    .configuration-content {
+        
+        padding: 31px 30px 30px;
+        border-top: solid 1px #606060;
+    }
+
+    .left-menu {
+        flex: 0 0 305px;
+        display: flex;
+        flex-direction: column;
+        background-color: #606060;
+        color: #E0E0E0;        
+        padding: 40px 0 30px;
+        box-sizing: border-box;       
+    } 
+
+       
+
+    
+
+    .left-menu-item {
+        text-decoration: none;
+        display: flex;        
+        padding-left: 30px;
+        padding-right: 10px;
+        color: inherit;        
+        height: 50px;
+        font-size: 20px;
+        font-weight: bold;
+        align-items: center;
+    }
+
+
+
+
+
+    .left-menu-item:hover {
+        cursor: pointer;
+        background-color: #707070;
+    }
+
+        .left-menu-item[selected="true"]{
+            background-color: rgba(255, 128, 0, 1);
+            color: white;
+    }
+
+    
+
+    .left-menu-item[targt="DbSettings"]::before {
+        content: "▤";
+        margin-right: 5px;
+        color: inherit;
+        font-size: 30px;
+    }
+
+    .left-menu-item[targt="Feedback"]::before {
+        content: "🕬";
+        margin-right: 5px;
+        color: inherit;
+        font-size: 30px;
+        padding-bottom: 15px;
+    }
+
+    .configuration-leave-button {
+        margin-top: auto;               
+    }
+
+    .configuration-leave-button:hover{
+        text-decoration: underline;
+    }
+</style>
+
+<main>
+    <div class="left-menu" >
+        <a class="left-menu-item" targt="DbSettings" href="@Url.Action("DbSettings", "Configuration")">
+            Database settings          
+        </a>
+        <a class="left-menu-item" targt="Feedback" href="@Url.Action("Feedback", "Configuration")">
+            Feedback
+        </a>
+        <a class="left-menu-item configuration-leave-button" href="@Url.Action("Index", "Home")">
+            Back to Home
+        </a>
+    </div>
+
+    <div class="configuration-content">
+        @RenderBody()
+    </div>
+</main>

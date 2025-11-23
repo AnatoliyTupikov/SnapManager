@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Xaml.Behaviors;
 using SnapManager.Data;
-using SnapManager.Models.WPFModels;
-using SnapManager.Models.WPFModels.Hierarchy;
+using SnapManager.Models.WPFModels.CredentialHierarchy;
 using SnapManager.Services;
 using SnapManager.Views.WPF.WPFHelpers;
 using System;
