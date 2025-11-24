@@ -25,45 +25,32 @@
   </thead>
   <tbody>
     <tr>
-      <td>1.1. согласно контенту разработанного Вами Web-сайта необходимо использовать элементы семантической<br>разметки языка HTML5 (не менее 5 различных элементов);</td>
+      <td>1. согласно контенту разработанного Вами Web-сайта необходимо использовать элементы семантической<br>разметки языка HTML5 (не менее 5 различных элементов);</td>
       <td>"...\SnapManager\Views\Shared\_Layout.cshtml"<br>"...\SnapManager\Views\Shared\_Navigation.cshtml"</td>
       <td>https://localhost:5005/</td>
     </tr>
     <tr>
-      <td>1.2. примените не менее 5 различных новых правил CSS3 для стилевого оформления Вашего Web-сайта;</td>
+      <td>2. примените не менее 5 различных новых правил CSS3 для стилевого оформления Вашего Web-сайта;</td>
       <td>"...\SnapManager\Views\Shared\_Layout.cshtml"<br>"...\SnapManager\Views\Configuration\_ConfigurationLayout.cshtml"<br>"...\SnapManager\wwwroot\styles\*.css"</td>
+      <td>https://localhost:5005/<br>https://localhost:5005/Configuration/DbSettings<br>https://localhost:5005/Configuration/Feedback</td>
+    </tr>    
+    <tr>
+      <td>3. на HTML-страницу обеспечивающий функциональность WebStorage;</td>
+      <td>"...\SnapManager\wwwroot\scripts\layout.js"<br>"...\SnapManager\wwwroot\scripts\configuration-layout.js"</td>
       <td>https://localhost:5005/<br>https://localhost:5005/Configuration/DbSettings<br>https://localhost:5005/Configuration/Feedback</td>
     </tr>
     <tr>
-      <td>1.3. задействуйте на Вашем Web-сайте новые элементы управления Web-форм HTML5 (не менее 5 различных элементов);</td>
-      <td></td>
-      <td></td>
+      <td>4. продемонстрируйте на примере разработанного Вами Web-сайта возможность использования в стандарте<br>создания графики с помощью Canvas API или масштабируемой векторной графики SVG;</td>
+      <td>"...\SnapManager\wwwroot\scripts\layout.js"<br>"...\SnapManager\Views\Shared\_Layout.cshtml"</td>
+      <td>https://localhost:5005/</td>
     </tr>
     <tr>
-      <td>1.4. на HTML-страницу обеспечивающий функциональность WebStorage;</td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>1.5. продемонстрируйте на примере разработанного Вами Web-сайта возможность использования в стандарте<br>создания графики с помощью Canvas API или масштабируемой векторной графики SVG;</td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>1.6. с использованием тегов языка HTML5 (&lt;audio&gt; или &lt;video&gt;) подключите несколько<br>мультимедийных объектов на HTML-страницу Вашего Web-сайта;</td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>1.7. изучите новые интерактивные возможности интегрированных и связанных API спецификации HTML5 и<br>на Ваш выбор продемонстрируйте на Вашем Web-сайте пример использования одной из них<br>(Drag and Drop API, History API, Geolocation API или File API);</td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>1.8. на отдельной HTML-странице Вашего Web-сайта реализуйте обмен сообщениями между браузером и<br>веб-сервером или обеспечьте асинхронную обработку сценариев JavaScript, используя одну из<br>указанных технологий: Offline Application API, Web Sockets, Server-Sent Events или Web Workers.</td>
-      <td></td>
-      <td></td>
-    </tr>
+      <td>5. с использованием тегов языка HTML5 (&lt;audio&gt; или &lt;video&gt;) подключите несколько<br>мультимедийных объектов на HTML-страницу Вашего Web-сайта;</td>
+      <td>"...\SnapManager\Views\Configuration\Feedback.cshtml"</td>
+      <td>https://localhost:5005/Configuration/Feedback</td>
+    </tr>    
   </tbody>
 </table>
+
+⚠️ Примечание: "https://localhost:5005/Configuration/Feedback" - страница была добавлена исключительно для добора заданий, поэтому выглядит совсем из ряда вон. Но аудио очень рекомендую вам прослушать!
 
