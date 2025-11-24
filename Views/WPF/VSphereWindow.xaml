@@ -10,7 +10,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:behaviors="clr-namespace:SnapManager.Views.WPF.WPFHelpers"
         mc:Ignorable="d"
-        xmlns:muc="clr-namespace:MyUserControls;assembly=MyUserControls"
+        
         MinHeight="450" MinWidth="750" Title="Credentials Manager" Height="450" Width="750" WindowStyle="ToolWindow">
     
     <i:Interaction.Triggers>
@@ -218,9 +218,7 @@
                         </StackPanel>
                         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <Label Content="Port:" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <muc:Spinner Grid.Row="2" Height="30" Width="75" HorizontalAlignment="Right" Margin="0,0,10,0" DefaultValue="443" MaxValue="65535" MinValue="1024">
-
-                            </muc:Spinner>
+                            
                         </StackPanel>
                         <StackPanel Grid.Row="3" VerticalAlignment="Top" Margin="0,0,0,10">
                             <Label Content="Credentials:" FontSize="14" Margin="10,10,0,0"/>

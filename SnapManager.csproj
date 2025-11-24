@@ -59,10 +59,6 @@
     <ItemGroup>
 	    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
-	
-    <ItemGroup>
-      <ProjectReference Include="..\MyUserControls\MyUserControls.csproj" />
-    </ItemGroup>
 
   <ItemGroup>
     <Resource Include="wwwroot\sources\loading.gif" />

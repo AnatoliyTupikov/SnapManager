@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:SnapManager.Views.WPF"
         xmlns:behaviors="clr-namespace:SnapManager.Views.WPF.WPFHelpers"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
-        xmlns:muc="clr-namespace:MyUserControls;assembly=MyUserControls"
-        xmlns:SpinnerDouble="clr-namespace:MyUserControls.SpinnerDouble;assembly=MyUserControls"
+        
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         x:Name="StartWindow" x:Class="SnapManager.Views.WPF.MainWindow"
         mc:Ignorable="d"
