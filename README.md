@@ -18,7 +18,7 @@
 <table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">
   <thead style="background-color: #f0f0f0;">
     <tr>
-      <th style="width: 400px; text-align: left;">Текст задания</th>
+      <th style="width: 1000px; text-align: left;">Текст задания</th>
       <th style="text-align: center;">Элемент(ы), содержащие реализацию</th>
       <th style="text-align: center;">Url адрес элемента</th>
     </tr>
