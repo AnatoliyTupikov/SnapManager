@@ -3,5 +3,5 @@
 
 Добрый день, Антон Валентинович!
 Если вы здесь, то ветка этого проекта неправильная, он не запустится у вас из-за зависимостей. Правильная ветка, где я это исключил здесь:
-https://github.com/AnatoliyTupikov/SnapManager.git
+https://github.com/AnatoliyTupikov/SnapManager/tree/Front-End-test-assignment
 
