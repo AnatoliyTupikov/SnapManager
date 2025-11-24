@@ -78,7 +78,6 @@
   <ItemGroup>
     <Folder Include="Controllers\DB_Setting\" />
     <Folder Include="Data\DesignTime\Migrations\NpgsqlServer\" />
-    <Folder Include="wwwroot\styles\" />
   </ItemGroup>
 
   <ItemGroup>

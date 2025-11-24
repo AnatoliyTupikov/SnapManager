@@ -16,76 +16,8 @@
         <script src="~/lib/modernizr-canvas.js"></script>
         <script src="~/scripts/modules/module-support-check.js"></script>
         <script type="module" src="~/scripts/layout.js"></script>
-        <style>
-            html, body{
-                margin: 0;
-                padding: 0;
-                font-family: Arial, sans-serif;
-            }
-            body{
-                display: flex;
-                flex-direction: column;
-                min-height: 100vh;
-            }
-            main{
-                flex:1;
-                display: flex;
-                flex-direction: column;
-            }
-            main > *{
-                flex: 1;
-            }
-            header {
-                position: relative;
-                display: flex;
-                height: 60px;
-                background-color: #606060;
-                padding-left: 10px;
-                justify-content: space-between;
-            }
-
-            .header-title{
-                
-                z-index:2;
-                font-size: 32px;
-                font-weight: bold;
-                color: black;
-                align-self: center;
-                
-            } 
-            .header-config{                                   
-                z-index: 2;
-                display: flex;
-                font-size: 20px;                
-                color: white;
-                align-items: center;
-                padding-left: 10px;
-                padding-right: 10px;
-                border-top: 10px solid #606060;
-                border-bottom: 10px solid #606060;
-                text-decoration: none;
-                height: 100%;
-                box-sizing: border-box;
-            }
-
-            .header-config:hover, .header-config[selected="true"]{
-                background-color: rgba(255, 128, 0, 1);
-              }
-
-            .header-canvas {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                top: 0;
-                left: 0;
-                z-index: 2;
-            }
-            .cell {           
-                background: lightseagreen;
-                border: 1px solid;
-            }        
-        </style>
-    </head>
+        <link rel="stylesheet" href="~/styles/_layout.css" />
+</head>
     <body>
         <header>
         <canvas class ="header-canvas"></canvas>

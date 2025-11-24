@@ -1,0 +1,18 @@
+﻿.content {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-items: center;
+    align-items: stretch;
+}
+
+.cell {
+    background: lightseagreen;
+    border: 1px solid;
+}
+
+.gutter {
+    background-color: red;
+    cursor: col-resize;
+}

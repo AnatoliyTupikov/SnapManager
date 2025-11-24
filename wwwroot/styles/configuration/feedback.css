@@ -1,0 +1,9 @@
+﻿#temp {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+audio {
+    width: 720px;
+}
