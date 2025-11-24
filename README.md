@@ -13,7 +13,7 @@
 2. Проигнорируйте появившееся windows окно. Это толстая версия UI на WPF, которая не относится к заданию. Можете свернуть, но не закрывайте, это приведет к завершению программы.
 3. Хост слушает запросы на порту 5005 (https://localhost:5005). Поэтому откройте браузер и перейдите по ссылке. Это и есть домашняя страница приложения.
 
-## Tssk elements
+## Task elements
 
 <table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">
   <thead style="background-color: #f0f0f0;">
@@ -32,7 +32,7 @@
     <tr>
       <td>2. примените не менее 5 различных новых правил CSS3 для стилевого оформления Вашего Web-сайта;</td>
       <td>"...\SnapManager\Views\Shared\_Layout.cshtml"<br>"...\SnapManager\Views\Configuration\_ConfigurationLayout.cshtml"<br>"...\SnapManager\wwwroot\styles\*.css"</td>
-      <td>https://localhost:5005/<br>https://localhost:5005/Configuration/DbSettings<br>https://localhost:5005/Configuration/Feedback</td>
+      <td>https://localhost:5005/<br>https://localhost:5005/Configuration/Feedback</td>
     </tr>    
     <tr>
       <td>3. на HTML-страницу обеспечивающий функциональность WebStorage;</td>
