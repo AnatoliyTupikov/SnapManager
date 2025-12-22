@@ -8,12 +8,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Xceed.Wpf.Toolkit.Primitives;
-
 namespace SnapManager.Models.DomainModels.CredentialsHierarchy
 {
     [Table("hierarchy_scheme")]
-    public class TreeItemDModel
+    public abstract class TreeItemDModel
     {        
     
         public int Id { get; set; }        

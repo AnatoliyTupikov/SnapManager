@@ -42,10 +42,9 @@ namespace SnapManager
         
         protected override void OnStartup(StartupEventArgs e)
         {
-            //base.MainWindow = mainWindow;
-            base.ShutdownMode = ShutdownMode.OnMainWindowClose;
-            base.MainWindow.Show();  // отображаем главное окно на экране
             
+            base.ShutdownMode = ShutdownMode.OnMainWindowClose;
+            base.MainWindow.Show();  // отображаем главное окно на экране            
             base.OnStartup(e);
         }
     }

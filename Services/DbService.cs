@@ -30,7 +30,7 @@ namespace SnapManager.Data
         };
         /// <summary>
         /// Свойство для получения списка допустимых провайдеров баз данных. А также их конфигураций, которые были получены из appsettings.json при инициализации сервиса.
-        /// Каждый раз создает новый экземпляр KeyValuePair, чтобы избежать проблем с изменением словаря.
+        /// Каждый раз создает новый экземпляр Dictionary<string, DBSettingsBase>, чтобы избежать проблем с изменением словаря.
         /// </summary>
         public Dictionary<string, DBSettingsBase> DbSettingsList => new(_dbSettingsList);
 
@@ -45,15 +45,11 @@ namespace SnapManager.Data
 
 
         private readonly IConfiguration configuration;
-        //public AlloWedDBTypes SelectedDbProvider { get => GetSelectedDbProviderFromConfig(); } 
 
-        public DbService(IConfiguration configuration)
+        public DbService(IConfiguration configuration) //получаем объект конфигурации из сервисов, хоть такого сервиса в ручную добавлено не было, он добавляется туда автоматически, благодаря ConfigureAppConfiguration
         {
             this.configuration = configuration;// получение конфигураций из файла appsettings.json
             InitializeDbConfigurationsFromAppSett();
-            //dboption = new DbContextOptions<ApplicationDbContext>();
-
-
         }
 
         /// <summary>
@@ -70,9 +66,6 @@ namespace SnapManager.Data
                 () => GetSelectedProviderFromAppSett(),
                 (Exception ex) => LoggerService.Log(ex, severity: LogSeverity.Warning));
             //ErrorDialogService.ShowErrorMessage((ex)));
-
-
-
         }
 
         /// <summary>
@@ -88,9 +81,6 @@ namespace SnapManager.Data
                 ErrorHandler.Try(
                     () => s.Value?.Initialize(cs),
                     (Exception ex) => LoggerService.Log(ex, $"Configuration for \"{s.Key}\" provider can't be upload from Application Settings:", LogSeverity.Error));
-                    //ErrorDialogService.ShowErrorMessage(ex, $"Configuration for \"{s.Key}\" provider can't be upload from Application Settings: \n"));
-
-
             }
 
         }
@@ -102,7 +92,7 @@ namespace SnapManager.Data
         {
             string? selected = configuration["DBType"];
             //Невалидная строка: передаст как есть
-            //Отсутствие нода или впринципе файла: возвращает null
+            //Отсутствие нода или в принципе файла: возвращает null
             try
             {
                 _selectedDbProvider = _dbSettingsList.First(p => p.Key == selected);

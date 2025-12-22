@@ -10,7 +10,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Xceed.Wpf.Toolkit.Primitives;
 
 namespace SnapManager.Models.WPFModels.CredentialHierarchy
 {
@@ -79,15 +78,12 @@ namespace SnapManager.Models.WPFModels.CredentialHierarchy
             get { return isCreating; }
             set { OnPropertyChanged(ref isCreating, value); }
         }
-
-
-        
+             
         
 
         public TreeItemWpfModel()
         {
-            Name = string.Empty;
-            DModel = new TreeItemDModel();
+            Name = string.Empty;            
             CreationDateUTC = DateTime.UtcNow;
             ModificationDateUTC = DateTime.UtcNow;
         }
